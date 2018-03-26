@@ -1,0 +1,47 @@
+---
+title: "DATA 605 - Discussion 6"
+author: "Joshua Sturm"
+date: "03/07/2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F, collapse = T)
+```
+
+Section 4.1, Exercise 19, Page 152
+
+# Problem 19
+In a poker hand, John has a very strong hand and bets 5 dollars. The probability that Mary has a better hand is .04. If Mary had a better hand she would raise with probability .9, but with a poorer hand she would only raise with probability .1. If Mary raises, what is the probability that she has a better hand than John does?
+
+# Solution
+Let $M$ be the event that Mary has a better hand. Then the event that Mary doesn't have a better hand is simply the complement, \ \ i.e. $\hspace{8mm}$ ~$P(M) = P(M^c)$.
+
+Let $R$ be the event that Mary raises.
+
+We have $P(M) = 0.04$, so $P(M^c) = 1 - 0.04 = 0.96$.
+
+We are also given $P(R|M) = 0.9$, and $P(R|M^c) = 0.1$.
+
+We're looking for $P(M|R)$.
+
+The formula for conditional probability is: $P(A|B) = \frac{P(A \cap B)}{P(B)}$.
+
+Our problem becomes $P(M|R) = \frac{P(M \cap R)}{P(R)}$.
+
+We're missing $P(R)$. We can use the alternate form of Bayes' Theorem, rewriting it as:
+
+$P(M|R) = \frac{P(R|M)P(M)}{P(R|M)P(M) + P(R|M^c)P(M^c)}$
+
+This simplifies to: $\frac{0.9 * 0.04}{(0.9 * 0.04)+(0.1 * 0.96)} = \frac{0.036}{0.132} = 0.\overline{2727}$.
+

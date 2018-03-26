@@ -1,0 +1,43 @@
+---
+title: "DATA 605 - Discussion 5"
+author: "Joshua Sturm"
+date: "03/02/2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F, collapse = T)
+```
+
+Section 1.2, exercise 2, page 35
+
+### Give a possible sample space $\Omega$ for each of the following experiments:
+
+\begin{itemize}
+\item An election decides between two candidates A and B.
+\item A two-sided coin is tossed.
+\item A student is asked for the month of the year and the day of the week on which her birthday falls.
+\item A student is chosen at random from a class of ten students.
+\item You receive a grade in this course.
+\end{itemize}
+
+
+\indent (a) Since there are only two options, the sample space is $\Omega = \{A, B\}$.
+
+\indent (b) Like in part (a), there are only two possible outcomes, so the sample space is $\Omega = \{\text{heads}, \text{tails}\}$.
+
+\indent (c) There are 12 possibilties for the month, and 7 possibilities for the day, so $\Omega = \{1,2,3,4,5,6,7,8,9,10,11,12\} \times \{S, M, T, W, Tr, F, Sa\}$.
+
+\indent (d) There are 10 possible students, so $\Omega = \{1, 2, 3, 4, 5, 6, 7, 8, 9, 10\}$.
+
+\indent (e) Assuming the only whole letter grades, $\Omega = \{A, B, C, D, F\}$.

@@ -1,0 +1,41 @@
+---
+title: "DATA 605 - Discussion 7"
+author: "Joshua Sturm"
+date: "03/13/2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F, collapse = T)
+```
+
+Section 5.1, Exercise 7, Page 197
+
+# 7. A die is rolled until the first time $T$ that a six turns up
+
+## (a) What is the probability distribution for $T$?
+
+### Solution
+Since we're looking for the first success, $T$ is a geometric random variable, with a distribution (density) of $P(T = n) = p\cdot(1-p)^{n-1} \ \ \ \ \ n = 1, 2, 3, 4, ...$
+
+$P(T = n) = (\frac{1}{6})\cdot(\frac{5}{6})^{n-1} \ \ \ \ \ n = 1, 2, 3, 4, ...$.
+
+## (b) Find $P(T > 3)$
+
+### Solution
+From Example 5.1, we find that $P(T > 3) = (1-p)^{3} = (\frac{5}{6})^{3} = \frac{125}{216} \approx$ `r round(125/216, 2)`.
+
+## (c) Find $P(T > 6|T > 3)$
+
+### Solution
+Also from Example 5.1, we find that $P(T > 6| T > 3) = \frac{P(T > 6)}{P(T > 3)} = \frac{\frac{5}{6}^{6}}{\frac{5}{6}^{3}} = (\frac{5}{6})^{3} = \frac{125}{216} \approx$ `r round(125/216, 2)`.

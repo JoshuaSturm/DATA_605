@@ -1,0 +1,32 @@
+---
+title: "DATA 605 - Discussion 3"
+author: "Joshua Sturm"
+date: "02/13/2018"
+output:
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+  pdf_document:
+    keep_tex: yes
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F)
+```
+
+Page 419, Exercise T17
+
+## Suppose that $B$ is a nonsingular matrix. Prove that $AB$ is similar to $BA$.
+
+Since $B$ is nonsingular, then it's invertible (Theorem CINM, page 200).\
+By Theorem MIMI (page 203), $(B^{-1})^{-1} = B$.\
+By Definition MI (page 194), $B^{-1}B = I$.\
+By Theorem MMIM (page 182), $BI = B$.
+
+Taking this all together, $(B^{-1})^{-1}AB(B^{-1}) = BA = AB$.
+

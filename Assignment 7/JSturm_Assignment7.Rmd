@@ -1,0 +1,159 @@
+---
+title: "DATA 605 - Assignment 7"
+author: "Joshua Sturm"
+date: "March 15, 2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F, collapse = T)
+```
+
+# 1.
+Let $X_1, X_2, . . . , X_n$ be $n$ mutually independent random variables, each of which is uniformly distributed on the integers from $1$ to $k$. Let $Y$ denote the minimum of the $X_i$’s. Find the distribution of $Y$.
+
+## Solution
+We first consider how many ways we can assign $Y$ to one of the $x_i$ variables.
+
+Since there are $n$ variables, with $k$ values, there are $k^n$ total possibilities.
+
+The number of ways we can get $Y = 1$ is the total number of possibilities less the number of possibilities that $Y$ is \textit{not} $1$. So, this can be done in $k^{n} - (k-1)^n$ ways. 
+
+Similarly, the number of ways to get $Y = 2$ would be $k^{n} - (k-2)^{n} - [k^{n} - (k-1)^{n}] = (k-1)^{n} - (k-2)^{n}$.
+
+The pattern we get is the recurrence relation $P(Y = m) = \frac{(k-m+1)^{n} - (k-m)^{n}}{k^{n}}$.
+
+# 2.
+Your organization owns a copier (future lawyers, etc.) or MRI (future doctors). This machine has a manufacturer’s expected lifetime of 10 years. This means that we expect one failure every ten years. (Include the probability statements and R Code for each part.)
+
+## a.
+What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a geometric. (Hint: the probability is equivalent to not failing during the first 8 years.)
+
+### Solution
+Let $p$ be the probability that the machine fails, and $q = 1 - p$ the probability that it doesn't.
+
+We're looking for the first failure (success) after 8 years, so this is a geometric distribution. Since we're only expecting one failure in 10 years, $p = 0.1, \ q = 0.9$.
+
+$P(X > 8) = 1 - P(X \leq 8)$
+
+$1 - (1 - q^{i+1}) = q^{i+1} = 0.9^{9} =$ `r round(0.9^9, 4)`.
+
+$E[X] = \frac{1}{p} = \frac{1}{0.1} =$ `r 1/0.1`.
+
+$Var(X) = \frac{1-p}{p^2} = \frac{0.9}{(0.1)^2} =$ `r 0.9/(0.1)^2`.
+
+Standard deviation = $\sqrt{Var(X)} = \sqrt{90} \approx$ `r sqrt(90)`.
+
+```{r part-a}
+pdf <- pgeom(8, 0.1, lower.tail = F)
+
+p <- 0.1
+q <- 1 - p
+ex <- p^-1
+var <- q/p^2
+sd <- sqrt(var)
+
+cat(sprintf("\n %s = %f \n", 
+            c("Probability", "Expected Value", "Variance", "Standard Deviation"),
+            c(pdf, ex, var, sd))
+    )
+```
+
+## b.
+What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as an exponential. 
+
+### Solution
+$P(X > 8) = e^{-\lambda i}$, with $\lambda = 0.1$.
+
+$P(X > 8) = e^{-0.8} =$ `r exp(-0.8)`.
+
+$E[X] = \frac{1}{\lambda} =$ `r 1/0.1`.
+
+$Var(X) = \frac{1}{\lambda^2} = \frac{1}{0.1^2} =$ `r 1/(0.1)^2`.
+
+Standard Deviation $= \sqrt{Var(X)} = \sqrt{100} = 10$.
+
+```{r part-b}
+pdf <- pexp(8, 0.1, lower.tail = F)
+
+l <- 0.1
+ex <- 1/l
+var <- 1/l^2
+sd <- sqrt(var)
+
+cat(sprintf("\n %s = %f \n", 
+            c("Probability", "Expected Value", "Variance", "Standard Deviation"),
+            c(pdf, ex, var, sd))
+    )
+```
+
+## c.
+What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a binomial. (Hint: 0 success in 8 years)
+
+### Solution
+We're looking for 0 successes in 8 years. So, $P(0)$ with $n = 8$.
+
+$P(0) = \binom{8}{0}(0.1)^0 \times 0.9{8-0} = (0.9)^8 =$ `r (0.9)^8`.
+
+$E[X] = np = 8\cdot 0.1 = 0.8$.
+
+$Var(X) = npq = 0.8\cdot 0.9 =$ `r 0.8*0.9`.
+
+Standard Deviation $= \sqrt{Var(X)} = \sqrt{0.72} =$ `r sqrt(0.72)`.
+
+```{r part-c}
+pdf <- pbinom(0, 8, 0.1)
+
+n <- 8
+i <- 0
+p <- 0.1
+q <- 0.9
+ex <- n*p
+var <- n*p*q
+sd <- sqrt(var)
+
+cat(sprintf("\n %s = %f \n", 
+            c("Probability", "Expected Value", "Variance", "Standard Deviation"),
+            c(pdf, ex, var, sd))
+    )
+```
+
+## d.
+What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a Poisson. 
+
+### Solution
+Since Poisson uses averages, and we expect one failure every 10 years, we can say the average yearly failure rate is 0.1.
+We're looking for 0 failures in the first 8 years.
+
+$P_{i}(t) = \frac{(\lambda t)^{i}e^{-\lambda t}}{i!}$
+
+$P_{0}(8) = \frac{(0.1\cdot 8)^{0}e^{-0.1\cdot 8}}{0!} = e^{-0.8} =$ `r exp(-0.8)`.
+
+$E[X] = Var(X) = \lambda\cdot t = 0.1 \cdot 8 = 0.8$.
+
+Standard Deviation $= \sqrt{Var(X)} = \sqrt{0.8} =$ `r sqrt(0.8)`.
+
+```{r}
+lambda <- 0.1
+t <- 8
+i <- 0
+ex <- lambda*t
+var <- lambda*t
+sd <- sqrt(var)
+pdf <- ppois(i, t*lambda)
+
+cat(sprintf("\n %s = %f \n", 
+            c("Probability", "Expected Value", "Variance", "Standard Deviation"),
+            c(pdf, ex, var, sd))
+    )
+```

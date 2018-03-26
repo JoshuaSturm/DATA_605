@@ -1,0 +1,66 @@
+---
+title: "DATA 605 - Discussion 4"
+author: "Joshua Sturm"
+date: "02/20/2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F, collapse = T)
+```
+
+Page 443, Exercise C26
+
+## Verify that the function below is a linear transformation.
+
+$T = P_2 \to \mathbb{C}^2, \hspace{5mm} T(a + bx + cx^2) = \begin{bmatrix}2a - b\\ b + c\end{bmatrix}$
+
+The function must have the following two properties to be a linear transformation:
+
+
+$1. \hspace{2mm} T(\textbf{u}_1 + \textbf{u}_2) = T(\textbf{u}_1) + T(\textbf{u}_2) \hspace{5mm} \forall \hspace{2mm} \textbf{u}_1,       \textbf{u}_2 \in U$
+
+$2. \hspace{2mm} T(\alpha \textbf{u}) = \alpha T(\textbf{u}) \hspace{5mm} \forall \hspace{2mm} \textbf{u} \in U \text{ and } \forall      \hspace{2mm} \alpha \in \mathbb{C}$
+
+### Condition 1
+
+We can picky dummy variables for $\textbf{v}$, e.g. let $\textbf{v} = d + ex + fx^2$.
+
+$T\Big[(a + bx + cx^2) + (d + ex + fx^2)\Big] = T\Big[(a + d) + (bx + ex) + (cx^2 + fx^2)\Big]$.
+
+Factor out the $x: \hspace{2mm} T\Big[(a + d) + x(b + e) + x^2(c + f)\Big]$.
+
+We can now check if our transformation will equal $\begin{bmatrix}2a - b\\ b + c\end{bmatrix}$.
+
+$\begin{bmatrix}2(a + d) - (b + e)\\ (b + e) + (c + f)\end{bmatrix} = \begin{bmatrix}2a + 2d - b + e \\ (b + e) + (c + f)\end{bmatrix}$.
+
+$\begin{bmatrix}(2a - b) + (2d - e)\\ (b + e) + (c + f)\end{bmatrix}$.
+
+Since it's associative: $\begin{bmatrix}2a - b \\ b + c\end{bmatrix} + \begin{bmatrix}2d - e\\ e + f\end{bmatrix}$.
+
+$= T(\textbf{u}) + T(\textbf{v})$.
+
+### Condition 2
+
+$T\Big[\alpha(a + bx + cx^2)\Big] = T\Big[(\alpha a) + (\alpha bx) + (\alpha cx^2)\Big]$.
+
+Factor out the $x: T\Big[(\alpha a) + x(\alpha b) + x^2(\alpha cx)\Big]$.
+
+Following the same procedure as in the first part: $\begin{bmatrix}2(\alpha a) - (\alpha b)\\ (\alpha b) + (\alpha c)\end{bmatrix}$.
+
+Factor our $\alpha: \begin{bmatrix}\alpha(2a - b)\\ \alpha(b + c)\end{bmatrix} = \alpha \begin{bmatrix}2a - b\\ b + c\end{bmatrix}$.
+
+$= \alpha T(\textbf{u})$.
+
+Since both conditions are satisfied, we can conclude that this function is a linear transformation.
+

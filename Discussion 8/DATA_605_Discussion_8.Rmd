@@ -1,0 +1,24 @@
+---
+title: "DATA 605 - Discussion 8"
+author: "Joshua Sturm"
+date: "03/22/2018"
+output:
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+  pdf_document:
+    keep_tex: yes
+always_allow_html: yes
+---
+
+Section 8.1, Page 312, Exercise 4
+
+# Question 4
+A 1-dollar bet on craps has an expected winning of $-.0141$. What does the Law of Large Numbers say about your winnings if you make a large number of 1-dollar bets at the craps table? Does it assure you that your losses will be small? Does it assure you that if n is very large you will lose?
+
+## Solution
+The Law of Large Numbers says that you will lose an average of $0.0141$ per game, so if you play a large number of games, your losses will grow. It doesn't say whether you will win or lose a game, but, as $n$ increases, your net will average out to a loss of $0.0141$ per game.

@@ -1,0 +1,103 @@
+---
+title: "DATA 605 - Assignment 8"
+author: "Joshua Sturm"
+date: "03/25/2018"
+output:
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+  pdf_document:
+    keep_tex: yes
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F, collapse = T)
+```
+
+Assignment: #11 and #14 on page 303 of probability text, and #1 on page 320-321
+
+# Question 1
+A company buys 100 lightbulbs, each of which has an exponential lifetime of 1000 hours. What is the expected time for the first of these bulbs to burn out? (See Exercise 10.)
+
+## Solution
+For exponential distribution, $E[X] = \frac{1}{\lambda}$, so $\frac{1}{\lambda} = 1000 \ \ \to \lambda = \frac{1}{1000}$.
+
+Since we're looking for the minimum of these $X_i$s, we can refer to question 10, which tells us that min$(X_i) = \frac{\mu}{n}$.
+
+We are given that $\mu = 1000$, so the expected time for the first bulb to burn out is $\frac{1000}{100} = 10$.
+
+# Question 2
+Assume that $X_1$ and $X_2$ are independent random variables, each having an exponential density with parameter $\lambda$. Show that $Z = X_1 - X_2$ has density
+\begin{equation*}
+f_Z(z) = \frac{1}{2}\lambda e^{-\lambda|z|}
+\end{equation*}
+
+## Solution
+The pdf of $W = X + Y$ is $\int_{-\infty}^{\infty}f_X(x)f_Y(W - x)dx$.
+
+We can rewrite our problem as a sum, i.e. $Z = X + (-Y)$. 
+
+Using the convolution formula, $f_Z(z) = \int_{-\infty}^{\infty}f_X(x)f_{-Y}(z - x) dx$.
+
+We can rewrite $f_{-Y}(z - x)$ as $f_Y(x - z)$.
+
+Our pdf is:
+
+\[
+f_X(x) = f_Y(x) = 
+\begin{cases}
+\lambda e^{\lambda x} & x \geq 0,\\
+0                     & x < 0.
+\end{cases}
+\]
+
+$f_Z(z) = \int_{0}^{\infty}\lambda e^{-\lambda x}\lambda e^{-\lambda(x - z)} dx$.
+
+$f_Z(z) = \lambda e^{\lambda z}\int_{0}^{\infty}\lambda e^{-2\lambda x} dx$. 
+
+$f_Z(z) = \lambda e^{\lambda z}\Big(-\frac{1}{2}e^{-2\lambda x}\Big|_{0}^{\infty}\Big) = \frac{1}{2}\lambda e^{\lambda z}$.
+
+We can rewrite $Z = X - Y$, as $-Z = Y - X$, which will have the same distribution as $X - Y$, i.e. $f_Z(z) = f_Z(-z)$, since they are iid.
+
+Our pdf is now:
+
+\[
+f_Z(z) = 
+\begin{cases}
+\frac{1}{2}\lambda e^{\lambda z}  & z < 0,\\
+\frac{1}{2}\lambda e^{-\lambda z} & z \geq 0.
+\end{cases}
+\]
+
+which is equivalent to $\frac{1}{2}\lambda e^{-\lambda|z|}$.
+
+# Question 3
+Let $X$ be a continuous random variable with mean $\mu = 10$ and variance $\sigma^2 = \frac{100}{3}$. Using Chebyshev’s Inequality, find an upper bound for the following probabilities.
+
+a) $P(|X - 10| \geq 2)$.
+
+b) $P(|X - 10| \geq 5)$.
+
+c) $P(|X - 10| \geq 9)$.
+
+d) $P(|X - 10| \geq 20)$.
+
+## Solution
+Chebyshev's Inequality states $P(|X - \mu| \geq \epsilon) \leq \frac{\sigma^2}{\epsilon^2}$.
+
+### (a)
+$P(|X - 10| \geq 2) \leq \frac{100}{12} = 8.\overline{33} = 1$, since the probability is between 0 and 1.
+
+### (b)
+$P(|X - 10| \geq 5) \leq \frac{100}{75} = 1.\overline{33} = 1$. ibid.
+
+### (c)
+$P(|X - 10| \geq 9) \leq \frac{100}{243} = 0.4115$.
+
+### (d)
+$P(|X - 10| \geq 20) \leq \frac{100}{1200} = 0.08\overline{33}$.

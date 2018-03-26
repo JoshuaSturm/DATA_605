@@ -1,0 +1,30 @@
+---
+title: "DATA 605 - c21 page 388"
+author: "Joshua Sturm"
+date: "February 17, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+```{r}
+library(pracma)
+```
+
+```{r}
+A <- matrix(c(18, -15, 33, -15,
+              -4, 8, -6, 6,
+              -9, 9, -16, 9,
+              5, -6, 9, -4),
+            ncol=4, nrow=4, byrow=T)
+
+B <- A-2*diag(ncol(A))
+rref(B)
+```
+
+The row-reduced matrix has a rank of 2, with 2 free variables.\
+The size of `A` is 4, so the geometric multiplicity will be 4 - 2 = 2.

@@ -1,0 +1,205 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={DATA 605 - Assignment 8},
+            pdfauthor={Joshua Sturm},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{DATA 605 - Assignment 8}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Joshua Sturm}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{03/25/2018}
+
+
+\begin{document}
+\maketitle
+
+Assignment: \#11 and \#14 on page 303 of probability text, and \#1 on
+page 320-321
+
+\section{Question 1}\label{question-1}
+
+A company buys 100 lightbulbs, each of which has an exponential lifetime
+of 1000 hours. What is the expected time for the first of these bulbs to
+burn out? (See Exercise 10.)
+
+\subsection{Solution}\label{solution}
+
+For exponential distribution, \(E[X] = \frac{1}{\lambda}\), so
+\(\frac{1}{\lambda} = 1000 \ \ \to \lambda = \frac{1}{1000}\).
+
+Since we're looking for the minimum of these \(X_i\)s, we can refer to
+question 10, which tells us that min\((X_i) = \frac{\mu}{n}\).
+
+We are given that \(\mu = 1000\), so the expected time for the first
+bulb to burn out is \(\frac{1000}{100} = 10\).
+
+\section{Question 2}\label{question-2}
+
+Assume that \(X_1\) and \(X_2\) are independent random variables, each
+having an exponential density with parameter \(\lambda\). Show that
+\(Z = X_1 - X_2\) has density
+
+\begin{equation*}
+f_Z(z) = \frac{1}{2}\lambda e^{-\lambda|z|}
+\end{equation*}
+
+\subsection{Solution}\label{solution-1}
+
+The pdf of \(W = X + Y\) is
+\(\int_{-\infty}^{\infty}f_X(x)f_Y(W - x)dx\).
+
+We can rewrite our problem as a sum, i.e. \(Z = X + (-Y)\).
+
+Using the convolution formula,
+\(f_Z(z) = \int_{-\infty}^{\infty}f_X(x)f_{-Y}(z - x) dx\).
+
+We can rewrite \(f_{-Y}(z - x)\) as \(f_Y(x - z)\).
+
+Our pdf is:
+
+\[
+f_X(x) = f_Y(x) = 
+\begin{cases}
+\lambda e^{\lambda x} & x \geq 0,\\
+0                     & x < 0.
+\end{cases}
+\]
+
+\(f_Z(z) = \int_{0}^{\infty}\lambda e^{-\lambda x}\lambda e^{-\lambda(x - z)} dx\).
+
+\(f_Z(z) = \lambda e^{\lambda z}\int_{0}^{\infty}\lambda e^{-2\lambda x} dx\).
+
+\(f_Z(z) = \lambda e^{\lambda z}\Big(-\frac{1}{2}e^{-2\lambda x}\Big|_{0}^{\infty}\Big) = \frac{1}{2}\lambda e^{\lambda z}\).
+
+We can rewrite \(Z = X - Y\), as \(-Z = Y - X\), which will have the
+same distribution as \(X - Y\), i.e. \(f_Z(z) = f_Z(-z)\), since they
+are iid.
+
+Our pdf is now:
+
+\[
+f_Z(z) = 
+\begin{cases}
+\frac{1}{2}\lambda e^{\lambda z}  & z < 0,\\
+\frac{1}{2}\lambda e^{-\lambda z} & z \geq 0.
+\end{cases}
+\]
+
+which is equivalent to \(\frac{1}{2}\lambda e^{-\lambda|z|}\).
+
+\section{Question 3}\label{question-3}
+
+Let \(X\) be a continuous random variable with mean \(\mu = 10\) and
+variance \(\sigma^2 = \frac{100}{3}\). Using Chebyshev's Inequality,
+find an upper bound for the following probabilities.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\item
+  \(P(|X - 10| \geq 2)\).
+\item
+  \(P(|X - 10| \geq 5)\).
+\item
+  \(P(|X - 10| \geq 9)\).
+\item
+  \(P(|X - 10| \geq 20)\).
+\end{enumerate}
+
+\subsection{Solution}\label{solution-2}
+
+Chebyshev's Inequality states
+\(P(|X - \mu| \geq \epsilon) \leq \frac{\sigma^2}{\epsilon^2}\).
+
+\subsubsection{(a)}\label{a}
+
+\(P(|X - 10| \geq 2) \leq \frac{100}{12} = 8.\overline{33} = 1\), since
+the probability is between 0 and 1.
+
+\subsubsection{(b)}\label{b}
+
+\(P(|X - 10| \geq 5) \leq \frac{100}{75} = 1.\overline{33} = 1\). ibid.
+
+\subsubsection{(c)}\label{c}
+
+\(P(|X - 10| \geq 9) \leq \frac{100}{243} = 0.4115\).
+
+\subsubsection{(d)}\label{d}
+
+\(P(|X - 10| \geq 20) \leq \frac{100}{1200} = 0.08\overline{33}\).
+
+
+\end{document}

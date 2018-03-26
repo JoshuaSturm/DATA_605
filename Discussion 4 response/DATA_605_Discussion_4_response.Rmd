@@ -1,0 +1,63 @@
+---
+title: "DATA 605 - Discussion 4 response"
+author: "Joshua Sturm"
+date: "02/22/2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F)
+```
+
+Page 460, Exercise C25  
+
+## Define the linear transformation
+
+$T: \mathbb{C}^3 \to \mathbb{C}^2, \hspace{2mm} T\left(\begin{bmatrix}x_1\\x_2\\x_3\end{bmatrix}\right) = \begin{bmatrix}2x_1 - x_2 + 5x_3\\ -4x_1 + 2x_2 - 10x_3\end{bmatrix}$.
+
+Find a basis for the kernel of $T, \ \mathcal{K}(T)$. Is $T$ injective?
+
+Set $T(x) = 0$, and then row reduce.
+
+\[
+\left[\begin{array}{ccc|c}
+  2 & -1 & 5 & 0 \\
+  -4 & 2 & -10 & 0
+\end{array} \right]
+\]
+
+```{r}
+library(pracma)
+
+A <- matrix(c(2, -1, 5, 0,
+              -4, 2, -10, 0),
+             nrow = 2, ncol = 4, byrow = T)
+
+a <- rref(A)
+a
+```
+
+Which gives us the system of equations:
+
+\begin{align*}
+x_1 - \frac{1}{2}x_2 + \frac{5}{2}x_3 &= 0 \\ 
+0 &= 0
+\end{align*}
+
+So $x_1 = \frac{1}{2}x_2 - \frac{5}{2}x_3$, with $x_2$ and $x_3$ being free variables.
+
+Thus, the basis set for the null space is $\left\{\begin{bmatrix}\frac{1}{2}\\1\\0\end{bmatrix}, \begin{bmatrix}\frac{-5}{2}\\0\\1\end{bmatrix}\right\}$
+
+Theorem KILT says $T$ is injective iff $\mathcal{K}(T)=\{0\}$.
+
+Since the kernel is not trivial, i.e. $\mathcal{K}(T)\neq\{0\}, \ T$ is not injective.

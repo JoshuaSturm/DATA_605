@@ -1,0 +1,145 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={DATA 605 - Discussion 4},
+            pdfauthor={Joshua Sturm},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{DATA 605 - Discussion 4}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Joshua Sturm}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{02/20/2018}
+
+
+\begin{document}
+\maketitle
+
+Page 443, Exercise C26
+
+\subsection{Verify that the function below is a linear
+transformation.}\label{verify-that-the-function-below-is-a-linear-transformation.}
+
+\(T = P_2 \to \mathbb{C}^2, \hspace{5mm} T(a + bx + cx^2) = \begin{bmatrix}2a - b\\ b + c\end{bmatrix}\)
+
+The function must have the following two properties to be a linear
+transformation:
+
+\(1. \hspace{2mm} T(\textbf{u}_1 + \textbf{u}_2) = T(\textbf{u}_1) + T(\textbf{u}_2) \hspace{5mm} \forall \hspace{2mm} \textbf{u}_1, \textbf{u}_2 \in U\)
+
+\(2. \hspace{2mm} T(\alpha \textbf{u}) = \alpha T(\textbf{u}) \hspace{5mm} \forall \hspace{2mm} \textbf{u} \in U \text{ and } \forall \hspace{2mm} \alpha \in \mathbb{C}\)
+
+\subsubsection{Condition 1}\label{condition-1}
+
+We can picky dummy variables for \(\textbf{v}\), e.g.~let
+\(\textbf{v} = d + ex + fx^2\).
+
+\(T\Big[(a + bx + cx^2) + (d + ex + fx^2)\Big] = T\Big[(a + d) + (bx + ex) + (cx^2 + fx^2)\Big]\).
+
+Factor out the
+\(x: \hspace{2mm} T\Big[(a + d) + x(b + e) + x^2(c + f)\Big]\).
+
+We can now check if our transformation will equal
+\(\begin{bmatrix}2a - b\\ b + c\end{bmatrix}\).
+
+\(\begin{bmatrix}2(a + d) - (b + e)\\ (b + e) + (c + f)\end{bmatrix} = \begin{bmatrix}2a + 2d - b + e \\ (b + e) + (c + f)\end{bmatrix}\).
+
+\(\begin{bmatrix}(2a - b) + (2d - e)\\ (b + e) + (c + f)\end{bmatrix}\).
+
+Since it's associative:
+\(\begin{bmatrix}2a - b \\ b + c\end{bmatrix} + \begin{bmatrix}2d - e\\ e + f\end{bmatrix}\).
+
+\(= T(\textbf{u}) + T(\textbf{v})\).
+
+\subsubsection{Condition 2}\label{condition-2}
+
+\(T\Big[\alpha(a + bx + cx^2)\Big] = T\Big[(\alpha a) + (\alpha bx) + (\alpha cx^2)\Big]\).
+
+Factor out the
+\(x: T\Big[(\alpha a) + x(\alpha b) + x^2(\alpha cx)\Big]\).
+
+Following the same procedure as in the first part:
+\(\begin{bmatrix}2(\alpha a) - (\alpha b)\\ (\alpha b) + (\alpha c)\end{bmatrix}\).
+
+Factor our
+\(\alpha: \begin{bmatrix}\alpha(2a - b)\\ \alpha(b + c)\end{bmatrix} = \alpha \begin{bmatrix}2a - b\\ b + c\end{bmatrix}\).
+
+\(= \alpha T(\textbf{u})\).
+
+Since both conditions are satisfied, we can conclude that this function
+is a linear transformation.
+
+
+\end{document}

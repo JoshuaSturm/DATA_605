@@ -1,0 +1,128 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={DATA 605 - Discussion 6},
+            pdfauthor={Joshua Sturm},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{DATA 605 - Discussion 6}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Joshua Sturm}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{03/07/2018}
+
+
+\begin{document}
+\maketitle
+
+Section 4.1, Exercise 19, Page 152
+
+\section{Problem 19}\label{problem-19}
+
+In a poker hand, John has a very strong hand and bets 5 dollars. The
+probability that Mary has a better hand is .04. If Mary had a better
+hand she would raise with probability .9, but with a poorer hand she
+would only raise with probability .1. If Mary raises, what is the
+probability that she has a better hand than John does?
+
+\section{Solution}\label{solution}
+
+Let \(M\) be the event that Mary has a better hand. Then the event that
+Mary doesn't have a better hand is simply the complement, ~~i.e.
+\(\hspace{8mm}\) \textasciitilde{}\(P(M) = P(M^c)\).
+
+Let \(R\) be the event that Mary raises.
+
+We have \(P(M) = 0.04\), so \(P(M^c) = 1 - 0.04 = 0.96\).
+
+We are also given \(P(R|M) = 0.9\), and \(P(R|M^c) = 0.1\).
+
+We're looking for \(P(M|R)\).
+
+The formula for conditional probability is:
+\(P(A|B) = \frac{P(A \cap B)}{P(B)}\).
+
+Our problem becomes \(P(M|R) = \frac{P(M \cap R)}{P(R)}\).
+
+We're missing \(P(R)\). We can use the alternate form of Bayes' Theorem,
+rewriting it as:
+
+\(P(M|R) = \frac{P(R|M)P(M)}{P(R|M)P(M) + P(R|M^c)P(M^c)}\)
+
+This simplifies to:
+\(\frac{0.9 * 0.04}{(0.9 * 0.04)+(0.1 * 0.96)} = \frac{0.036}{0.132} = 0.\overline{2727}\).
+
+
+\end{document}

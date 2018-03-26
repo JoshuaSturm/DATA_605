@@ -1,0 +1,109 @@
+---
+title: "DATA 605 - Assignment 1"
+author: "Joshua Sturm"
+date: "02/01/2018"
+output:
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+  pdf_document:
+    keep_tex: yes
+always_allow_html: yes
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F)
+```
+
+# Problem Set 1
+
+## 1. Calculate the dot product of u,v where u=[0.5;0.5] and v=[3;-4]
+### Solution
+$$ \textbf{u} \cdot \textbf{v} = \textbf{u}_1\cdot \textbf{v}_1 + \textbf{u}_2\cdot \textbf{v}_2 \\
+0.5\cdot 3 + 0.5\cdot -4 \to 1.5 - 2 = -0.5$$
+
+```{r ex1}
+u <- c(0.5, 0.5)
+v <- c(3,-4)
+udotv <- drop(u %*% v) # The drop function is used to remove dimensions > 1
+udotv
+```
+
+## 2. What are the lengths of u and v?
+### Solution
+$$ ||\textbf{u}|| = \sqrt{\textbf{u}_1^2 + \textbf{u}_2^2 + ... + \textbf{u}_n^2} \\
+\sqrt{0.5^2 + 0.5^2} = \sqrt{0.25 + 0.25} = \sqrt{0.5} = `r sqrt(0.5)`$$.
+
+$$ ||\textbf{v}|| = \sqrt{3^2 + (-4)^2} = \sqrt{9 + 16} = \sqrt{25} = 5$$.
+
+```{r ex2}
+normu <- sqrt(u[1]^2 + u[2]^2)
+normv <- sqrt(v[1]^2 + v[2]^2)
+normu
+normv
+```
+
+## 3. What is the linear combination 3u-2v?
+### Solution
+$$ a\textbf{u} + b\textbf{v} = [a\cdot\textbf{u}_1, a\cdot\textbf{u}_2, ..., a\cdot\textbf{u}_n] + [b\cdot\textbf{v}_1, b\cdot\textbf{v}_2, ..., b\cdot\textbf{v}_n]$$
+
+$$[3\cdot0.5, 3\cdot0.5] - [2\cdot3, 2\cdot-4] = [1.5, 1.5] - [6, -8] = [-4.5, 9.5]$$.
+
+```{r ex3}
+c(3*u - 2*v)
+```
+
+## 4. What is the angle between u and v?
+### Solution
+$$\cos(\theta) = \frac{\textbf{u}\cdot\textbf{v}}{\textbf{||u|| ||v||}} \ \ \to \ \ \theta = cos^{-1}\Bigg(\frac{\textbf{u}\cdot\textbf{v}}{\textbf{||u|| ||v||}}\Bigg) $$
+$$\theta = cos^{-1}\Bigg(\frac{-0.5}{0.7071*5}\Bigg) = cos^{-1}(-0.1414) \approx 1.7127 \text{ rad} \approx 98.13^{\circ}.$$
+
+# Problem Set 2
+
+```{r prob2}
+matsolver <- function(a, b){
+  # Assume a is the matrix, and b is the constrain. 
+  # Merge the two into an augmented matrix
+  augmm <- cbind(a, b)
+  
+  # Need a 1 in position [1,1]
+  if (augmm[1,1] == 0){
+    if (augmm[2,1] != 0){
+      augmm <- augmm[c(2,1,3),]
+    }
+    else {
+      augmm <- augmm[c(3,2,1),]
+    }
+  }
+  else if (augmm[1,1] != 1){
+    augmm[1,] <- augmm[1,] / augmm[1,1] 
+  }
+  
+  # All other rows in column 1 should be zero
+  if (augmm[2,1] != 0){
+    augmm[2,] <- (augmm[2,1] * augmm[1,]) - augmm[2,]
+  }
+  if (augmm[3,1] != 0){
+    augmm[3,] <- (augmm[3,1] * augmm[1,]) - augmm[3,]
+  }
+  
+  #Need a non-zero number in the middle
+  if (augmm[2,2] == 0){
+    augmm <- augmm[c(1,3,2),]
+  }
+  
+  augmm[2,] <- augmm[2,] / augmm[2,2]
+  augmm[3,] <- (augmm[3,2] * augmm[2,]) - augmm[3,]
+  
+  # Use back substitution
+  solvedm <- numeric(3)
+  solvedm[3] <- augmm[3,4] / augmm[3,3]
+  solvedm[2] <- (augmm[2,4] - augmm[2,3] * solvedm[3]) / augmm[2,2]
+  solvedm[1] <- (augmm[1,4] - augmm[1,2] * solvedm[2] - augmm[1,3] * solvedm[3]) / augmm[1,1]
+  
+  return(cbind(solvedm))
+}
+```

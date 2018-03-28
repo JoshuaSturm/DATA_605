@@ -5,17 +5,19 @@ date: "03/28/2018"
 output:
   pdf_document:
     keep_tex: yes
+  word_document:
+    toc: yes
   html_document:
-    highlight: pygments
-    theme: cerulean
     code_folding: show
+    highlight: pygments
+    smart: no
+    theme: cerulean
     toc: yes
     toc_float: yes
-    smart: no
 always_allow_html: yes
 ---
 
-Section 10.1, Page 374, Exercise 5
+Section 9.1, Page 339, Exercise 12
 
 # Exercise 12
 A balanced coin is flipped 400 times. Determine the number x such that the probability that the number of heads is between 200 - x and 200 + x is approximately .80.

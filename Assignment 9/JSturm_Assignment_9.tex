@@ -1,0 +1,270 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={DATA 605 - Assignment 9},
+            pdfauthor={Joshua Sturm},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{DATA 605 - Assignment 9}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Joshua Sturm}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{03/29/2018}
+
+
+\begin{document}
+\maketitle
+
+\section{Question 1 (9.3 \#11)}\label{question-1-9.3-11}
+
+The price of one share of stock in the Pilsdorff Beer Company (see
+Exercise 8.2.12) is given by \(Y_n\) on the \(n\)th day of the year.
+Finn observes that the differences \(X_n = Y_{n+1} - Y_n\) appear to be
+independent random variables with a common distribution having mean
+\(\mu = 0\) and variance \(\sigma^2 = \frac{1}{4}\). If \(Y_1 = 100\),
+estimate the probability that \(Y_{365}\) is:
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\item
+  \(\geq 100\).
+\item
+  \(\geq 110\).
+\item
+  \(\geq 120\).
+\end{enumerate}
+
+\subsection{Solution}\label{solution}
+
+\(Y_{365} = Y_1 + X_1 + X_2 + ... + X_{364}.\)
+
+\(S_n = Y_{n+1} - 100\).
+
+If \(n = 364, S_{364} = Y_{365} - 100 \ \to \ Y_{365} = S_{364} + 100\).
+
+\(E[S_{364}] = n\mu = 364\cdot 0 = 0\).
+
+Variance of \(S_{364} = 364\cdot\frac{1}{4} =\) 91
+\(\ \to \ \sigma = \sqrt{91}\).
+
+\subsubsection{(a)}\label{a}
+
+\(P(Y_{365} \geq 100) = P(S_{364} + 100 \geq 100) = P(S_{364} \geq 0)\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{q <-}\StringTok{ }\DecValTok{0}
+\NormalTok{mu <-}\StringTok{ }\DecValTok{0}
+\NormalTok{sd <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(}\DecValTok{91}\NormalTok{)}
+
+\KeywordTok{pnorm}\NormalTok{(q, }\DataTypeTok{mean =}\NormalTok{ mu, }\DataTypeTok{sd =}\NormalTok{ sd, }\DataTypeTok{lower.tail =}\NormalTok{ F)}
+\NormalTok{## [1] 0.5}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{(b)}\label{b}
+
+\(P(Y_{365} \geq 110) = P(S_{364} + 100 \geq 110) = P(S_{364} \geq 10)\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{q <-}\StringTok{ }\DecValTok{10}
+
+\KeywordTok{pnorm}\NormalTok{(q, }\DataTypeTok{mean =}\NormalTok{ mu, }\DataTypeTok{sd =}\NormalTok{ sd, }\DataTypeTok{lower.tail =}\NormalTok{ F)}
+\NormalTok{## [1] 0.1472537}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{(c)}\label{c}
+
+\(P(Y_{365} \geq 120) = P(S_{364} + 100 \geq 120) = P(S_{364} \geq 20)\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{q <-}\StringTok{ }\DecValTok{20}
+
+\KeywordTok{pnorm}\NormalTok{(q, }\DataTypeTok{mean =}\NormalTok{ mu, }\DataTypeTok{sd =}\NormalTok{ sd, }\DataTypeTok{lower.tail =}\NormalTok{ F)}
+\NormalTok{## [1] 0.01801584}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Question 2}\label{question-2}
+
+Calculate the expected value and variance of the binomial distribution
+using the moment generating function.
+
+\subsection{Solution}\label{solution-1}
+
+The pmf for the binomial distribution is \(\binom{n}{k}p^{n}q^{n-k}\).
+
+The moment generating function of a random variable is
+\(M_k(t) = E[e^{tn}], \ \ t \in \mathbb{R}\).
+
+Plugging in the binomial formula, the moment generating function is
+\[M_k(t) = \sum_{k=0}^{n}e^{tn}\binom{n}{k}p^{n}q^{n-k} = \sum_{k=0}^{n}(pe^t)^{n}\binom{n}{k}q^{n-k}\]
+
+Simplifying: \(M_k(t) = (q + pe^t)^n\).
+
+If we differentiate \(M_k(t)\) wrt \(t\):
+\(M_{k}^{'}(t) = n(pe^t)(q+pe^t)^{n-1}\).
+
+When \(t = 0: E[k] = np(q+p)^{n-1} = np\).
+
+For the second moment, we take the second derivative (using the product
+rule):
+
+\(M_k^{''}(t) = np\Big[e^{t}(pe^t + q)^{n-1}+(n-1)(pe^t + q)^{n-2}(e^tp + 0)\Big]\)
+
+Simplifying: \(M_k^{''}(t) = npe^t(pe^t + q)^{n-2}(npe^t + q)\).
+
+When \(t = 0:\)
+
+\(M_k^{''}(0) = E[k^2] = np(q + p)^{n-2}(q + np) = np(q + np)\).
+
+Using the formula \(V(x) = E[x^2] - (E[x])^2:\)
+
+\(V(k) = np(q + np) - n^2p^2 = npq\).
+
+\section{Question 3}\label{question-3}
+
+Calculate the expected value and variance of the exponential
+distribution using the moment generating function.
+
+\subsection{Solution}\label{solution-2}
+
+Proceeding in the same manner as in question 2.
+
+The pmf for the exponential distribution of a random variable is
+\(\lambda e^{-\lambda x}\).
+
+Moment generating function:
+\[M_x(t) = \int_{0}^{\infty}e^{tx}\lambda e^{-\lambda x} dx = \lambda \int_{0}^{\infty}e^{(t-\lambda)x} dx = \frac{\lambda}{t - \lambda}, \ \ |t| < \lambda\]
+
+\(M_{x}^{'}(t) = \frac{\lambda}{(\lambda - t)^2}\).
+
+When \(t = 0:\)
+
+\(E[X] = M_{x}^{'}(0) = \frac{1}{\lambda}\).
+
+Second moment = second derivative:
+
+\(E[X^2] = M_{x}^{''}(0) = \frac{2\lambda}{(\lambda - t)^3} = \frac{2}{\lambda^2}\).
+
+Using the formula \(V(x) = E[X^2] - (E[X])^2:\)
+
+\(V(x) = \frac{2}{\lambda^2} - \frac{1}{\lambda^2} = \frac{1}{\lambda^2}\).
+
+
+\end{document}

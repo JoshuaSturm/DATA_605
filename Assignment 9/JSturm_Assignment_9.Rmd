@@ -1,0 +1,128 @@
+---
+title: "DATA 605 - Assignment 9"
+author: "Joshua Sturm"
+date: "03/29/2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: pygments
+    theme: cerulean
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: no
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F, collapse = T)
+```
+
+# Question 1 (9.3 #11)
+The price of one share of stock in the Pilsdorff Beer Company (see Exercise 8.2.12) is given by $Y_n$ on the $n$th day of the year. Finn observes that the differences $X_n = Y_{n+1} - Y_n$ appear to be independent random variables with a common distribution having mean $\mu = 0$ and variance $\sigma^2 = \frac{1}{4}$. If $Y_1 = 100$, estimate the probability that $Y_{365}$ is:
+
+(a) $\geq 100$.
+
+(b) $\geq  110$.
+
+(c) $\geq 120$.
+
+## Solution
+$Y_{365} = Y_1 + X_1 + X_2 + ... + X_{364}.$
+
+$S_n = Y_{n+1} - 100$.
+
+If $n = 364, S_{364} = Y_{365} - 100 \ \to \ Y_{365} = S_{364} + 100$.
+
+$E[S_{364}] = n\mu = 364\cdot 0 = 0$.
+
+Variance of $S_{364} = 364\cdot\frac{1}{4} =$ `r 364/4` $\ \to \ \sigma = \sqrt{91}$.
+
+### (a)
+
+$P(Y_{365} \geq 100) = P(S_{364} + 100 \geq 100) = P(S_{364} \geq 0)$.
+
+```{r 1a}
+q <- 0
+mu <- 0
+sd <- sqrt(91)
+
+pnorm(q, mean = mu, sd = sd, lower.tail = F)
+
+```
+
+### (b)
+
+$P(Y_{365} \geq 110) = P(S_{364} + 100 \geq 110) = P(S_{364} \geq 10)$.
+
+```{r 1b}
+q <- 10
+
+pnorm(q, mean = mu, sd = sd, lower.tail = F)
+```
+
+### (c)
+
+$P(Y_{365} \geq 120) = P(S_{364} + 100 \geq 120) = P(S_{364} \geq 20)$.
+
+```{r 1c}
+q <- 20
+
+pnorm(q, mean = mu, sd = sd, lower.tail = F)
+```
+
+# Question 2
+Calculate the expected value and variance of the binomial distribution using the moment generating function.
+
+## Solution
+The pmf for the binomial distribution is $\binom{n}{k}p^{n}q^{n-k}$.
+
+The moment generating function of a random variable is $M_k(t) = E[e^{tn}], \ \ t \in \mathbb{R}$.
+
+Plugging in the binomial formula, the moment generating function is \[M_k(t) = \sum_{k=0}^{n}e^{tn}\binom{n}{k}p^{n}q^{n-k} = \sum_{k=0}^{n}(pe^t)^{n}\binom{n}{k}q^{n-k}\]
+
+Simplifying: $M_k(t) = (q + pe^t)^n$.
+
+If we differentiate $M_k(t)$ wrt $t$: $M_{k}^{'}(t) = n(pe^t)(q+pe^t)^{n-1}$.
+
+When $t = 0: E[k] = np(q+p)^{n-1} = np$.
+
+For the second moment, we take the second derivative (using the product rule): 
+
+$M_k^{''}(t) = np\Big[e^{t}(pe^t + q)^{n-1}+(n-1)(pe^t + q)^{n-2}(e^tp + 0)\Big]$ 
+
+Simplifying: $M_k^{''}(t) = npe^t(pe^t + q)^{n-2}(npe^t + q)$.
+
+When $t = 0:$
+
+$M_k^{''}(0) = E[k^2] = np(q + p)^{n-2}(q + np) = np(q + np)$.
+
+Using the formula $V(x) = E[x^2] - (E[x])^2:$
+
+$V(k) = np(q + np) - n^2p^2 = npq$.
+
+# Question 3
+Calculate the expected value and variance of the exponential distribution using the moment generating function.
+
+## Solution
+Proceeding in the same manner as in question 2.
+
+The pmf for the exponential distribution of a random variable is $\lambda e^{-\lambda x}$.
+
+Moment generating function: \[M_x(t) = \int_{0}^{\infty}e^{tx}\lambda e^{-\lambda x} dx = \lambda \int_{0}^{\infty}e^{(t-\lambda)x} dx = \frac{\lambda}{t - \lambda}, \ \ |t| < \lambda\]
+
+$M_{x}^{'}(t) = \frac{\lambda}{(\lambda - t)^2}$.
+
+When $t = 0:$
+
+$E[X] = M_{x}^{'}(0) = \frac{1}{\lambda}$.
+
+Second moment = second derivative:
+
+$E[X^2] = M_{x}^{''}(0) = \frac{2\lambda}{(\lambda - t)^3} = \frac{2}{\lambda^2}$.
+
+Using the formula $V(x) = E[X^2] - (E[X])^2:$
+
+$V(x) = \frac{2}{\lambda^2} - \frac{1}{\lambda^2} = \frac{1}{\lambda^2}$.
+

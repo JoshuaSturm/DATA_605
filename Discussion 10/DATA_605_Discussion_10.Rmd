@@ -1,0 +1,50 @@
+---
+title: "DATA 605 - Discussion 10"
+author: "Joshua Sturm"
+date: "04/10/2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: textmate
+    theme: sandstone
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: yes
+  github_document:
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F, collapse = T, cache = T)
+```
+
+Section 11.1, Page 414, Exercise 8
+
+# Exercise 8
+A certain calculating machine uses only the digits 0 and 1. It is supposed to transmit one of these digits through several stages. However, at every stage, there is a probability p that the digit that enters this stage will be changed
+when it leaves and a probability $q = 1 - p$ that it won’t. Form a Markov chain to represent the process of transmission by taking as states the digits 0 and 1. What is the matrix of transition probabilities?
+
+# Solution
+If we wanted to visualize how the machine works:
+
+$X_1 \to \text{STAGE 1} \to X_2 \to \text{STAGE 2} \to X_3 \to \text{STAGE 3} \to x_4 \to \cdot\cdot\cdot$
+
+At each stage (or step), $X_i$ can take on one of two values (or states): $S = \{0, 1\}$.
+
+The transition matrix will be
+
+\[
+P = 
+\begin{pmatrix}  
+q & p \\
+p & q
+\end{pmatrix}
+= 
+\begin{pmatrix}
+1 - p & p \\
+p & 1 - p
+\end{pmatrix}
+\]

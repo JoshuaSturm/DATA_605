@@ -1,0 +1,80 @@
+---
+title: "DATA 605 - Assignment 10"
+author: "Joshua Sturm"
+date: "April 15, 2018"
+output:
+  github_document:
+  html_document:
+    highlight: textmate
+    theme: sandstone
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: yes
+  pdf_document:
+    keep_tex: yes
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F, collapse = T, cache = T)
+```
+
+# Question 1
+Smith is in jail and has 1 dollar; he can get out on bail if he has 8 dollars.
+A guard agrees to make a series of bets with him. If Smith bets A dollars,
+he wins A dollars with probability .4 and loses A dollars with probability .6.
+Find the probability that he wins 8 dollars before losing all of his money if
+
+## (a) he bets 1 dollar each time (timid strategy).
+
+##(b) he bets, each time, as much as possible but not more than necessary to bring his fortune up to 8 dollars (bold strategy).
+
+## (c) Which strategy gives Smith the better chance of getting out of jail?
+
+# Solutions
+
+This is known as the Gambler's Ruin problem. 
+
+We are given:
+
+Initial stake $z = k = 1$.
+
+$M = 8$
+
+$P = 0.4$
+
+$q = 0.6$
+
+$q_z = \frac{(\frac{q}{p})^z - 1}{(\frac{q}{p})^M - 1}$
+
+## (a) 
+
+$q_z = \frac{(\frac{0.6}{0.4})^1 - 1}{(\frac{0.6}{0.4})^8 - 1} =$ `r (0.6/0.4 - 1)/((0.6/0.4)^8 - 1)`.
+
+There is a ~2% probability Smith will win using this strategy.
+
+## (b)
+
+The quickest strategy is if he bets everything each time. That is, beginning from state $z = k = 1$, he can move fall to 0 with $q = 0.6$, or rise to 2 with $p = 0.4$. Similarly, suppose he moved to 2, he bets everything, and can fall to 0 with $q = 0.6$, or rise to 4 with $p = 0.4$.
+
+![](markov.png)
+
+Using the formula $q_k = p\cdot q_{k+1} + q\cdot q{k-1}$:
+
+$q_0 = 0$
+
+$q_1 = (0.4)q_2 + (0.6)q_0$
+
+$q_2 = (0.4)q_4 + (0.6)q_0$
+
+$q_4 = (0.4)q_8 + (0.6)q_0$
+
+$q_8 = 1$
+
+$(0.4)^3 =$ `r (0.4)^3`.
+
+# References
+- http://people.math.umass.edu/~lr7q/ps_files/teaching/math456/Week4.pdf

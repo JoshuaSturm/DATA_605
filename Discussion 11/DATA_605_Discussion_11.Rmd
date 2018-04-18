@@ -1,0 +1,290 @@
+---
+title: "DATA 605 - Discussion 11"
+author: "Joshua Sturm"
+date: "04/16/2018"
+output:
+  github_document:
+  html_document:
+    highlight: textmate
+    theme: sandstone
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: yes
+  pdf_document:
+    keep_tex: yes
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F, collapse = T, cache = T)
+```
+
+# 1. Data Exploration
+
+```{r load-libraries}
+library(tidyverse)
+library(knitr)
+library(corrplot)
+library(gridExtra)
+```
+
+
+## 1.1 Import Dataset
+
+```{r import-dataset}
+ins <- read.csv("insurance.csv")
+```
+
+## 1.1.1 Data Dictionary
+
+```{r data-dictionary}
+defs <- c("An integer indicating the age of the primary beneficiary (excluding those above 64 years, since they are generally covered by the government)", 
+          "The policy holder's gender, either male or female", 
+          "The body mass index (BMI), which provides a sense of how over- or under-weight a person is relative to their height. BMI is equal to weight (in kilograms) divided by height (in meters) squared. An ideal BMI is within the range of 18.5 to 24.9", 
+          "An integer indicating the number of children/dependents covered by the insurance plan", 
+          "A yes or no categorical variable that indicates whether the insured regularly smokes tobacco", 
+          "The beneficiary's place of residence in the US, divided into four geographic regions: northeast, southeast, southwest, or northwest", 
+          "Dependent variable - measures the medical costs each person charged to the insurance plan for the year")
+
+ins.dict <- data.frame(names(ins), defs, stringsAsFactors = F)
+names(ins.dict) <- c("Variable Name", "Definition")
+
+kable(ins.dict)
+```
+
+
+## 1.2 Data Structure
+
+```{r data-structure}
+psych::describe(ins)
+```
+
+The dataset has `r ncol(ins)` variables, and `r nrow(ins)` cases.
+
+## 1.3 Missing data
+
+```{r check-missing}
+any(is.na(ins))
+```
+
+Amazingly, this dataset has no missing cases, which will simplify our cleaning process!
+
+## 1.4 Visualizations
+
+### 1.4.1 Boxplot
+
+```{r summary-boxplot}
+ins.bp <- ins %>%
+  select(c(1, 3)) %>%
+  gather()
+
+summary.boxplot <- ggplot(ins.bp, aes(x = key, y = value)) +
+  labs(x = "variable", title = "Insurance Data Boxplot") +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 1)
+
+summary.boxplot
+```
+
+### 1.4.2 Histogram
+
+```{r summary-histogram}
+ins.h <- ins %>%
+  select(c(1, 3, 7)) %>%
+  gather()
+
+ins.hist <- ggplot(data = ins.h, mapping = aes(x = value)) + 
+  geom_histogram(bins = 10) + 
+  facet_wrap(~key, scales = 'free_x')
+
+ins.hist
+```
+
+### 1.4.3 Bar Chart
+
+```{r summary-bar}
+ins.b <- ins %>%
+  select(c(2, 4:6)) %>%
+  gather()
+
+ins.bar <- ggplot(data = ins.b, mapping = aes(x = value)) + 
+  geom_bar() + 
+  facet_wrap(~key, scales = 'free_x')
+
+ins.bar
+```
+
+### 1.4.4 Correlation
+
+#### 1.4.4.1 Correlation Heatmap
+
+```{r summary-correlation-heatmap}
+ins.c <- mutate_all(ins, funs(as.numeric))
+corrplot(cor(ins.c), method = "color", type = "lower")
+```
+
+#### 1.4.4.2 Correlation (with dependent) table
+
+```{r summary-correlation-table}
+
+corp <- apply(ins.c[, -7], 2, function(x) cor.test(x, y=ins.c$charges)$p.value)
+cortable <- cor(ins.c[, -7], ins.c$charges)
+kable(cbind(as.character(corp), cortable), col.names = c("P-value", "Correlation with dependent"))
+```
+
+Based on the above correlation analyses, one can see that most variables, especially `smoker` and `age`, are positively correlated with the dependent variable `charges`, while `region` has a negative correlation. 
+
+# 2. Data Preparation
+
+## 2.1 Missing Data
+As noted earlier, the dataset is remarkably whole, so we may proceed without worrying about having to imputate any data.
+
+## 2.2 Normality of Predictor Variables
+As can be seen in the distribution plots in [section 1.4.2][1.4.2 Histogram], `bmi` appears to be nearly normal, while `age` has a slight right skew. Linear regression does not make any assumptions on the normality of any variables, so I will keep the variables as is.
+
+## 2.4 Variable Transformation
+For one of my models, I will transform `bmi` to a binary variable, with any case having a value inside the accepted range as described in the data dictionary being marked 0, and all others marked 1.
+
+## 2.5 Outliers
+From [section 1.4.1][1.4.1 Boxplot], only `bmi` has outliers. I believe that transforming it to a continuous variable, as outlined in the [preceding section][2.4 Variable Transformation]. 
+
+# 3. Build Models
+
+## 3.1 Model 1
+For the first model, I will include all variables as is, to serve as a baseline with which to compare future models that may have transformed variables.
+
+```{r model-one}
+m1 <- lm(formula = charges ~ .,
+         data = ins)
+summary(m1)
+```
+
+### 3.1.1 Model 1 Interpretation
+The model summary reveals several variables that are insignificant toward predicting the target variable - `sexmale`, and `regionnorthwest`. I'll build a second model, and see if I can improve on this.
+
+## 3.2 Model 2
+```{r model-two}
+m2 <- lm(formula = charges ~ . -sex -region,
+         data = ins)
+summary(m2)
+```
+
+## 3.2.1 Compare models
+```{r compare-one-two}
+anova(m2, m1)
+```
+
+It seems that the original model is preferred over the second. 
+
+I will build one last model, where I'll transform the `bmi` variable from continuous to binary.
+
+```{r model-three}
+m3 <- ins %>%
+  mutate(overweight = if_else(bmi > 24.9, 1, 0)) %>%
+  select(-c(bmi, region, sex))
+
+m3 <- lm(formula = charges ~ .,
+         data = m3)
+summary(m3)
+anova(m3, m1)
+```
+
+Once again, the first model outperforms the newer one, so we will use model 1 for our predictions.
+
+# 4. Model Selection
+
+## 4.1 Split Data
+```{r split-data}
+set.seed(858)
+
+# Split data into training and testing partitions
+train <- ins %>%
+  sample_frac(., size = 0.7, replace = F)
+test <- anti_join(ins, train)
+```
+
+## 4.3 Prediction
+```{r model}
+model1 <- lm(formula = charges ~ .,
+             data = train)
+```
+
+```{r prediction}
+predicted.charges <- predict(object = model1, newdata = test, type = "response")
+```
+
+```{r predict-plots}
+model1 <- lm(formula = charges ~ .,
+             data = train)
+
+rp1 <- ggplot(model1, aes(.fitted, .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  labs(title = "Residuals vs Fitted")
+
+rp2 <- ggplot(model1, aes(.fitted, .stdresid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE)
+
+rp3 <- ggplot(model1) +
+  stat_qq(aes(sample = .stdresid)) +
+  geom_abline()
+
+rp4 <- ggplot(model1, aes(.fitted, sqrt(abs(.stdresid)))) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  labs(title = "Scale-Location")
+
+rp5 <- ggplot(model1, aes(seq_along(.cooksd), .cooksd)) +
+  geom_col() +
+  ylim(0, 0.0075) +
+  labs(title = "Cook's Distance")
+
+rp6 <- ggplot(model1, aes(.hat, .stdresid)) +
+  geom_point(aes(size = .cooksd)) +
+  geom_smooth(se = FALSE, size = 0.5) +
+  labs(title = "Residuals vs Leverage")
+
+rp7 <- ggplot(model1, aes(.hat, .cooksd)) +
+  geom_vline(xintercept = 0, colour = NA) +
+  geom_abline(slope = seq(0, 3, by = 0.5), colour = "white") +
+  geom_smooth(se = FALSE) +
+  geom_point() +
+  labs(title = "Cook's distance vs Leverage")
+
+rp8 <- ggplot(model1, aes(.resid)) +
+  geom_histogram(bins = 7, color="darkblue", fill="steelblue")
+
+grid.arrange(rp1, rp2, rp3, rp4, rp5, rp6, rp7, rp8, ncol = 2)
+```
+
+From the above visualizations, the residuals appear to be close enough to normal, so I'll proceed with using the model to make predictions.
+
+## 4.4 Prediction Results
+```{r prediction-results}
+results.df <- data.frame(cbind(actuals = test$charges, predicted = predicted.charges))
+
+results.df <- results.df %>%
+  mutate(error = results.df$actuals - results.df$predicted) %>%
+  round(., 2)
+results.df <- results.df %>%
+  mutate(percerror = paste0(round(results.df$error/results.df$actuals*100,2),"%"))
+
+kable(head(results.df))
+```
+
+```{r mean-error, collapse = F}
+sprintf("The mean percent error is: %s%%", round(mean(results.df$error/results.df$actuals*100), 2))
+```
+
+# 5. Remarks
+Our model was able to predict the insurance premium for policy holders with a mean difference of ~19%. 
+
+While `sex` and `region` were not major contributors to the model, the model with those variables removed actually performed slightly worse. Perhaps if `region` was further broken down by state, it might provide more explanatory power.
+
+As one would expect, `smoker` is _highly_ correlated with `charges` - that is, a smoker is very likely to have a higher premium.
+
+

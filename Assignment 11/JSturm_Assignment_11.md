@@ -1,48 +1,53 @@
----
-title: "DATA 605 - Assignment 11"
-author: "Joshua Sturm"
-date: "April 22, 2018"
-output:
-  github_document:
-  html_document:
-    highlight: textmate
-    theme: sandstone
-    code_folding: show
-    toc: yes
-    toc_float: yes
-    smart: yes
-  pdf_document:
-    keep_tex: yes
-always_allow_html: yes
-editor_options: 
-  chunk_output_type: console
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning = F, message = F, collapse = T, cache = T)
-```
+DATA 605 - Assignment 11
+================
+Joshua Sturm
+April 22, 2018
 
 Using the `cars` dataset in R, build a linear model for stopping distance as a function of speed and replicate the analysis of your textbook chapter 3 (visualization, quality evaluation of the model, and residual analysis.)
 
-```{r load-libraries}
+``` r
 library(tidyverse)
 library(gridExtra)
 ```
 
-```{r load-dataset}
+``` r
 data <- cars
 glimpse(data)
+## Observations: 50
+## Variables: 2
+## $ speed <dbl> 4, 4, 7, 7, 8, 9, 10, 10, 10, 11, 11, 12, 12, 12, 12, 13...
+## $ dist  <dbl> 2, 10, 4, 22, 16, 10, 18, 26, 34, 17, 28, 14, 20, 24, 28...
 ```
+
 The dataset contains 2 variables, and 50 cases.
 
-```{r build-model}
+``` r
 model <- lm(formula = dist ~ speed,
             data = data)
 summary(model)
+## 
+## Call:
+## lm(formula = dist ~ speed, data = data)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -29.069  -9.525  -2.272   9.215  43.201 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) -17.5791     6.7584  -2.601   0.0123 *  
+## speed         3.9324     0.4155   9.464 1.49e-12 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 15.38 on 48 degrees of freedom
+## Multiple R-squared:  0.6511, Adjusted R-squared:  0.6438 
+## F-statistic: 89.57 on 1 and 48 DF,  p-value: 1.49e-12
 ```
-The model has an adjusted r-squared of `r summary(model)$adj.r.squared`, and a p-value of $\approx$ `r round(summary(model)$coefficients[2,4], 4)`.
 
-```{r predict-plots}
+The model has an adjusted r-squared of 0.6438102, and a p-value of ≈ 0.
+
+``` r
 
 rp1 <- ggplot(model, aes(.fitted, .resid)) +
   geom_point() +
@@ -86,5 +91,7 @@ rp8 <- ggplot(model, aes(.resid)) +
 
 grid.arrange(rp1, rp2, rp3, rp4, rp5, rp6, rp7, rp8, ncol = 2)
 ```
+
+![](JSturm_Assignment_11_files/figure-markdown_github/predict-plots-1.png)
 
 The residuals appear to be nearly normal, as can be seen in the plots `fitted vs. residuals`, `Q-Q Plot`, and the residual histogram. Taken together with the information from the model summary, we can conclude that this model is sufficiently capable of making predictions on this dataset.

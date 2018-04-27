@@ -1,0 +1,486 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={DATA 605 - Discussion 12},
+            pdfauthor={Joshua Sturm},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{longtable,booktabs}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{DATA 605 - Discussion 12}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Joshua Sturm}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{April 27, 2018}
+
+
+\begin{document}
+\maketitle
+
+\section{Objective}\label{objective}
+
+Using R, build a multiple regression model for data that interests you.
+Include in this model at least one quadratic term, one dichotomous term,
+and one dichotomous vs.~quantitative interaction term. Interpret all
+coefficients. Conduct residual analysis. Was the linear model
+appropriate? Why or why not?
+
+I will continue with the work I did for discussion 11, and include an
+interaction term in the model to see how it compares with the base
+model.
+
+\section{1. Data Exploration}\label{data-exploration}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(knitr)}
+\KeywordTok{library}\NormalTok{(corrplot)}
+\KeywordTok{library}\NormalTok{(gridExtra)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{1.1 Import Dataset}\label{import-dataset}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ins <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"insurance.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{1.1.1 Data Dictionary}\label{data-dictionary}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{defs <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"An integer indicating the age of the primary beneficiary (excluding those above 64 years, since they are generally covered by the government)"}\NormalTok{, }
+          \StringTok{"The policy holder's gender, either male or female"}\NormalTok{, }
+          \StringTok{"The body mass index (BMI), which provides a sense of how over- or under-weight a person is relative to their height. BMI is equal to weight (in kilograms) divided by height (in meters) squared. An ideal BMI is within the range of 18.5 to 24.9"}\NormalTok{, }
+          \StringTok{"An integer indicating the number of children/dependents covered by the insurance plan"}\NormalTok{, }
+          \StringTok{"A yes or no categorical variable that indicates whether the insured regularly smokes tobacco"}\NormalTok{, }
+          \StringTok{"The beneficiary's place of residence in the US, divided into four geographic regions: northeast, southeast, southwest, or northwest"}\NormalTok{, }
+          \StringTok{"Dependent variable - measures the medical costs each person charged to the insurance plan for the year"}\NormalTok{)}
+
+\NormalTok{ins.dict <-}\StringTok{ }\KeywordTok{data.frame}\NormalTok{(}\KeywordTok{names}\NormalTok{(ins), defs, }\DataTypeTok{stringsAsFactors =}\NormalTok{ F)}
+\KeywordTok{names}\NormalTok{(ins.dict) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"Variable Name"}\NormalTok{, }\StringTok{"Definition"}\NormalTok{)}
+
+\KeywordTok{kable}\NormalTok{(ins.dict)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule
+Variable Name & Definition\tabularnewline
+\midrule
+\endhead
+age & An integer indicating the age of the primary beneficiary
+(excluding those above 64 years, since they are generally covered by the
+government)\tabularnewline
+sex & The policy holder's gender, either male or female\tabularnewline
+bmi & The body mass index (BMI), which provides a sense of how over- or
+under-weight a person is relative to their height. BMI is equal to
+weight (in kilograms) divided by height (in meters) squared. An ideal
+BMI is within the range of 18.5 to 24.9\tabularnewline
+children & An integer indicating the number of children/dependents
+covered by the insurance plan\tabularnewline
+smoker & A yes or no categorical variable that indicates whether the
+insured regularly smokes tobacco\tabularnewline
+region & The beneficiary's place of residence in the US, divided into
+four geographic regions: northeast, southeast, southwest, or
+northwest\tabularnewline
+charges & Dependent variable - measures the medical costs each person
+charged to the insurance plan for the year\tabularnewline
+\bottomrule
+\end{longtable}
+
+\subsection{1.2 Data Structure}\label{data-structure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{psych}\OperatorTok{::}\KeywordTok{describe}\NormalTok{(ins)}
+\NormalTok{##          vars    n     mean       sd  median  trimmed     mad     min}
+\NormalTok{## age         1 1338    39.21    14.05   39.00    39.01   17.79   18.00}
+\NormalTok{## sex*        2 1338     1.51     0.50    2.00     1.51    0.00    1.00}
+\NormalTok{## bmi         3 1338    30.66     6.10   30.40    30.50    6.20   15.96}
+\NormalTok{## children    4 1338     1.09     1.21    1.00     0.94    1.48    0.00}
+\NormalTok{## smoker*     5 1338     1.20     0.40    1.00     1.13    0.00    1.00}
+\NormalTok{## region*     6 1338     2.52     1.10    3.00     2.52    1.48    1.00}
+\NormalTok{## charges     7 1338 13270.42 12110.01 9382.03 11076.02 7440.81 1121.87}
+\NormalTok{##               max    range  skew kurtosis     se}
+\NormalTok{## age         64.00    46.00  0.06    -1.25   0.38}
+\NormalTok{## sex*         2.00     1.00 -0.02    -2.00   0.01}
+\NormalTok{## bmi         53.13    37.17  0.28    -0.06   0.17}
+\NormalTok{## children     5.00     5.00  0.94     0.19   0.03}
+\NormalTok{## smoker*      2.00     1.00  1.46     0.14   0.01}
+\NormalTok{## region*      4.00     3.00 -0.04    -1.33   0.03}
+\NormalTok{## charges  63770.43 62648.55  1.51     1.59 331.07}
+\end{Highlighting}
+\end{Shaded}
+
+The dataset has 7 variables, and 1338 cases.
+
+\subsection{1.3 Missing data}\label{missing-data}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{any}\NormalTok{(}\KeywordTok{is.na}\NormalTok{(ins))}
+\NormalTok{## [1] FALSE}
+\end{Highlighting}
+\end{Shaded}
+
+Amazingly, this dataset has no missing cases, which will simplify our
+cleaning process!
+
+\subsection{1.4 Visualizations}\label{visualizations}
+
+\subsubsection{1.4.1 Boxplot}\label{boxplot}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ins.bp <-}\StringTok{ }\NormalTok{ins }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{gather}\NormalTok{()}
+
+\NormalTok{summary.boxplot <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(ins.bp, }\KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ key, }\DataTypeTok{y =}\NormalTok{ value)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"variable"}\NormalTok{, }\DataTypeTok{title =} \StringTok{"Insurance Data Boxplot"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_boxplot}\NormalTok{(}\DataTypeTok{outlier.colour =} \StringTok{"red"}\NormalTok{, }\DataTypeTok{outlier.shape =} \DecValTok{1}\NormalTok{)}
+
+\NormalTok{summary.boxplot}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{DATA_605_Discussion_12_files/figure-latex/summary-boxplot-1.pdf}
+
+\subsubsection{1.4.2 Histogram}\label{histogram}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ins.h <-}\StringTok{ }\NormalTok{ins }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DecValTok{7}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{gather}\NormalTok{()}
+
+\NormalTok{ins.hist <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ ins.h, }\DataTypeTok{mapping =} \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ value)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{10}\NormalTok{) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{key, }\DataTypeTok{scales =} \StringTok{'free_x'}\NormalTok{)}
+
+\NormalTok{ins.hist}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{DATA_605_Discussion_12_files/figure-latex/summary-histogram-1.pdf}
+
+\subsubsection{1.4.3 Bar Chart}\label{bar-chart}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ins.b <-}\StringTok{ }\NormalTok{ins }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{4}\OperatorTok{:}\DecValTok{6}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{gather}\NormalTok{()}
+
+\NormalTok{ins.bar <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ ins.b, }\DataTypeTok{mapping =} \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ value)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{() }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\NormalTok{key, }\DataTypeTok{scales =} \StringTok{'free_x'}\NormalTok{)}
+
+\NormalTok{ins.bar}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{DATA_605_Discussion_12_files/figure-latex/summary-bar-1.pdf}
+
+\subsubsection{1.4.4 Correlation}\label{correlation}
+
+\paragraph{1.4.4.1 Correlation Heatmap}\label{correlation-heatmap}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ins.c <-}\StringTok{ }\KeywordTok{mutate_all}\NormalTok{(ins, }\KeywordTok{funs}\NormalTok{(as.numeric))}
+\KeywordTok{corrplot}\NormalTok{(}\KeywordTok{cor}\NormalTok{(ins.c), }\DataTypeTok{method =} \StringTok{"color"}\NormalTok{, }\DataTypeTok{type =} \StringTok{"lower"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{DATA_605_Discussion_12_files/figure-latex/summary-correlation-heatmap-1.pdf}
+
+\paragraph{1.4.4.2 Correlation (with dependent)
+table}\label{correlation-with-dependent-table}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\NormalTok{corp <-}\StringTok{ }\KeywordTok{apply}\NormalTok{(ins.c[, }\OperatorTok{-}\DecValTok{7}\NormalTok{], }\DecValTok{2}\NormalTok{, }\ControlFlowTok{function}\NormalTok{(x) }\KeywordTok{cor.test}\NormalTok{(x, }\DataTypeTok{y=}\NormalTok{ins.c}\OperatorTok{$}\NormalTok{charges)}\OperatorTok{$}\NormalTok{p.value)}
+\NormalTok{cortable <-}\StringTok{ }\KeywordTok{cor}\NormalTok{(ins.c[, }\OperatorTok{-}\DecValTok{7}\NormalTok{], ins.c}\OperatorTok{$}\NormalTok{charges)}
+\KeywordTok{kable}\NormalTok{(}\KeywordTok{cbind}\NormalTok{(}\KeywordTok{as.character}\NormalTok{(corp), cortable), }\DataTypeTok{col.names =} \KeywordTok{c}\NormalTok{(}\StringTok{"P-value"}\NormalTok{, }\StringTok{"Correlation with dependent"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+& P-value & Correlation with dependent\tabularnewline
+\midrule
+\endhead
+age & 4.88669333171859e-29 & 0.299008193330648\tabularnewline
+sex & 0.0361327210059298 & 0.0572920622020254\tabularnewline
+bmi & 2.45908553511669e-13 & 0.198340968833629\tabularnewline
+children & 0.0128521285201365 & 0.0679982268479048\tabularnewline
+smoker & 8.2714358421744e-283 & 0.787251430498477\tabularnewline
+region & 0.82051783646525 & -0.00620823490944446\tabularnewline
+\bottomrule
+\end{longtable}
+
+Based on the above correlation analyses, one can see that most
+variables, especially \texttt{smoker} and \texttt{age}, are positively
+correlated with the dependent variable \texttt{charges}, while
+\texttt{region} has a negative correlation.
+
+\section{2. Model 1 - Base}\label{model-1---base}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m1 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ charges }\OperatorTok{~}\StringTok{ }\NormalTok{.,}
+         \DataTypeTok{data =}\NormalTok{ ins)}
+\KeywordTok{summary}\NormalTok{(m1)}
+\NormalTok{## }
+\NormalTok{## Call:}
+\NormalTok{## lm(formula = charges ~ ., data = ins)}
+\NormalTok{## }
+\NormalTok{## Residuals:}
+\NormalTok{##      Min       1Q   Median       3Q      Max }
+\NormalTok{## -11304.9  -2848.1   -982.1   1393.9  29992.8 }
+\NormalTok{## }
+\NormalTok{## Coefficients:}
+\NormalTok{##                 Estimate Std. Error t value Pr(>|t|)    }
+\NormalTok{## (Intercept)     -11938.5      987.8 -12.086  < 2e-16 ***}
+\NormalTok{## age                256.9       11.9  21.587  < 2e-16 ***}
+\NormalTok{## sexmale           -131.3      332.9  -0.394 0.693348    }
+\NormalTok{## bmi                339.2       28.6  11.860  < 2e-16 ***}
+\NormalTok{## children           475.5      137.8   3.451 0.000577 ***}
+\NormalTok{## smokeryes        23848.5      413.1  57.723  < 2e-16 ***}
+\NormalTok{## regionnorthwest   -353.0      476.3  -0.741 0.458769    }
+\NormalTok{## regionsoutheast  -1035.0      478.7  -2.162 0.030782 *  }
+\NormalTok{## regionsouthwest   -960.0      477.9  -2.009 0.044765 *  }
+\NormalTok{## ---}
+\NormalTok{## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1}
+\NormalTok{## }
+\NormalTok{## Residual standard error: 6062 on 1329 degrees of freedom}
+\NormalTok{## Multiple R-squared:  0.7509, Adjusted R-squared:  0.7494 }
+\NormalTok{## F-statistic: 500.8 on 8 and 1329 DF,  p-value: < 2.2e-16}
+\end{Highlighting}
+\end{Shaded}
+
+\section{3. Model 2 - Including an interaction
+term}\label{model-2---including-an-interaction-term}
+
+For this model, we'll include the interaction term \texttt{age*bmi}, and
+see how it compares with the base model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{m2 <-}\StringTok{ }\KeywordTok{lm}\NormalTok{(}\DataTypeTok{formula =}\NormalTok{ charges }\OperatorTok{~}\StringTok{ }\NormalTok{. }\OperatorTok{+}\StringTok{ }\NormalTok{age}\OperatorTok{*}\NormalTok{bmi,}
+         \DataTypeTok{data =}\NormalTok{ ins)}
+\KeywordTok{summary}\NormalTok{(m2)}
+\NormalTok{## }
+\NormalTok{## Call:}
+\NormalTok{## lm(formula = charges ~ . + age * bmi, data = ins)}
+\NormalTok{## }
+\NormalTok{## Residuals:}
+\NormalTok{##      Min       1Q   Median       3Q      Max }
+\NormalTok{## -11303.6  -2844.9   -982.8   1385.6  29993.4 }
+\NormalTok{## }
+\NormalTok{## Coefficients:}
+\NormalTok{##                   Estimate Std. Error t value Pr(>|t|)    }
+\NormalTok{## (Intercept)     -1.170e+04  2.498e+03  -4.682 3.13e-06 ***}
+\NormalTok{## age              2.506e+02  6.117e+01   4.096 4.46e-05 ***}
+\NormalTok{## sexmale         -1.320e+02  3.331e+02  -0.396 0.692062    }
+\NormalTok{## bmi              3.313e+02  8.023e+01   4.130 3.86e-05 ***}
+\NormalTok{## children         4.753e+02  1.379e+02   3.448 0.000583 ***}
+\NormalTok{## smokeryes        2.385e+04  4.134e+02  57.690  < 2e-16 ***}
+\NormalTok{## regionnorthwest -3.518e+02  4.766e+02  -0.738 0.460592    }
+\NormalTok{## regionsoutheast -1.033e+03  4.792e+02  -2.156 0.031267 *  }
+\NormalTok{## regionsouthwest -9.609e+02  4.782e+02  -2.010 0.044682 *  }
+\NormalTok{## age:bmi          2.041e-01  1.943e+00   0.105 0.916341    }
+\NormalTok{## ---}
+\NormalTok{## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1}
+\NormalTok{## }
+\NormalTok{## Residual standard error: 6064 on 1328 degrees of freedom}
+\NormalTok{## Multiple R-squared:  0.7509, Adjusted R-squared:  0.7492 }
+\NormalTok{## F-statistic: 444.8 on 9 and 1328 DF,  p-value: < 2.2e-16}
+\KeywordTok{anova}\NormalTok{(m2, m1)}
+\NormalTok{## Analysis of Variance Table}
+\NormalTok{## }
+\NormalTok{## Model 1: charges ~ age + sex + bmi + children + smoker + region + age * }
+\NormalTok{##     bmi}
+\NormalTok{## Model 2: charges ~ age + sex + bmi + children + smoker + region}
+\NormalTok{##   Res.Df        RSS Df Sum of Sq     F Pr(>F)}
+\NormalTok{## 1   1328 4.8839e+10                          }
+\NormalTok{## 2   1329 4.8840e+10 -1   -405956 0.011 0.9163}
+\end{Highlighting}
+\end{Shaded}
+
+The model has a poorer adjusted r-squared, but a lower f-stat.
+Additionally, a chi-square test using the \texttt{anova} function tells
+us these models aren't very different, which suggests the additional
+interaction term does not add anything in terms of explanatory power.
+While the first model is not perfect (it would require some variable
+transformations to be used in production), it is somewhat preferred over
+this newer one.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\NormalTok{rp1 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(m1, }\KeywordTok{aes}\NormalTok{(.fitted, .resid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_hline}\NormalTok{(}\DataTypeTok{yintercept =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Residuals vs Fitted"}\NormalTok{)}
+
+\NormalTok{rp2 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(m1, }\KeywordTok{aes}\NormalTok{(.fitted, .stdresid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_hline}\NormalTok{(}\DataTypeTok{yintercept =} \DecValTok{0}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{)}
+
+\NormalTok{rp3 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(m1) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{stat_qq}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{sample =}\NormalTok{ .stdresid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_abline}\NormalTok{()}
+
+\NormalTok{rp4 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(m1, }\KeywordTok{aes}\NormalTok{(.fitted, }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{abs}\NormalTok{(.stdresid)))) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Scale-Location"}\NormalTok{)}
+
+\NormalTok{rp5 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(m1, }\KeywordTok{aes}\NormalTok{(}\KeywordTok{seq_along}\NormalTok{(.cooksd), .cooksd)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_col}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{ylim}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.0075}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Cook's Distance"}\NormalTok{)}
+
+\NormalTok{rp6 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(m1, }\KeywordTok{aes}\NormalTok{(.hat, .stdresid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{size =}\NormalTok{ .cooksd)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{size =} \FloatTok{0.5}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Residuals vs Leverage"}\NormalTok{)}
+
+\NormalTok{rp7 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(m1, }\KeywordTok{aes}\NormalTok{(.hat, .cooksd)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_vline}\NormalTok{(}\DataTypeTok{xintercept =} \DecValTok{0}\NormalTok{, }\DataTypeTok{colour =} \OtherTok{NA}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_abline}\NormalTok{(}\DataTypeTok{slope =} \KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{3}\NormalTok{, }\DataTypeTok{by =} \FloatTok{0.5}\NormalTok{), }\DataTypeTok{colour =} \StringTok{"white"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{(}\DataTypeTok{se =} \OtherTok{FALSE}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_point}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Cook's distance vs Leverage"}\NormalTok{)}
+
+\NormalTok{rp8 <-}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(m1, }\KeywordTok{aes}\NormalTok{(.resid)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{(}\DataTypeTok{bins =} \DecValTok{7}\NormalTok{, }\DataTypeTok{color=}\StringTok{"darkblue"}\NormalTok{, }\DataTypeTok{fill=}\StringTok{"steelblue"}\NormalTok{)}
+
+\KeywordTok{grid.arrange}\NormalTok{(rp1, rp2, rp3, rp4, rp5, rp6, rp7, rp8, }\DataTypeTok{ncol =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{DATA_605_Discussion_12_files/figure-latex/model-one-lots-1.pdf}
+
+
+\end{document}

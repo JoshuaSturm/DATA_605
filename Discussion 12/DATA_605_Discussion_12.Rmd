@@ -1,0 +1,207 @@
+---
+title: "DATA 605 - Discussion 12"
+author: "Joshua Sturm"
+date: "April 27, 2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: textmate
+    theme: sandstone
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: yes
+  github_document:
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, message = F, collapse = T, cache = T)
+```
+
+# Objective
+Using R, build a multiple regression model for data that interests you.  Include in this model at least one quadratic term, one dichotomous term, and one dichotomous vs. quantitative interaction term.  Interpret all coefficients. Conduct residual analysis.  Was the linear model appropriate? Why or why not?
+
+I will continue with the work I did for discussion 11, and include an interaction term in the model to see how it compares with the base model.
+
+# 1. Data Exploration
+
+```{r load-libraries}
+library(tidyverse)
+library(knitr)
+library(corrplot)
+library(gridExtra)
+```
+
+
+## 1.1 Import Dataset
+
+```{r import-dataset}
+ins <- read.csv("insurance.csv")
+```
+
+## 1.1.1 Data Dictionary
+
+```{r data-dictionary}
+defs <- c("An integer indicating the age of the primary beneficiary (excluding those above 64 years, since they are generally covered by the government)", 
+          "The policy holder's gender, either male or female", 
+          "The body mass index (BMI), which provides a sense of how over- or under-weight a person is relative to their height. BMI is equal to weight (in kilograms) divided by height (in meters) squared. An ideal BMI is within the range of 18.5 to 24.9", 
+          "An integer indicating the number of children/dependents covered by the insurance plan", 
+          "A yes or no categorical variable that indicates whether the insured regularly smokes tobacco", 
+          "The beneficiary's place of residence in the US, divided into four geographic regions: northeast, southeast, southwest, or northwest", 
+          "Dependent variable - measures the medical costs each person charged to the insurance plan for the year")
+
+ins.dict <- data.frame(names(ins), defs, stringsAsFactors = F)
+names(ins.dict) <- c("Variable Name", "Definition")
+
+kable(ins.dict)
+```
+
+
+## 1.2 Data Structure
+
+```{r data-structure}
+psych::describe(ins)
+```
+
+The dataset has `r ncol(ins)` variables, and `r nrow(ins)` cases.
+
+## 1.3 Missing data
+
+```{r check-missing}
+any(is.na(ins))
+```
+
+Amazingly, this dataset has no missing cases, which will simplify our cleaning process!
+
+## 1.4 Visualizations
+
+### 1.4.1 Boxplot
+
+```{r summary-boxplot}
+ins.bp <- ins %>%
+  select(c(1, 3)) %>%
+  gather()
+
+summary.boxplot <- ggplot(ins.bp, aes(x = key, y = value)) +
+  labs(x = "variable", title = "Insurance Data Boxplot") +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 1)
+
+summary.boxplot
+```
+
+### 1.4.2 Histogram
+
+```{r summary-histogram}
+ins.h <- ins %>%
+  select(c(1, 3, 7)) %>%
+  gather()
+
+ins.hist <- ggplot(data = ins.h, mapping = aes(x = value)) + 
+  geom_histogram(bins = 10) + 
+  facet_wrap(~key, scales = 'free_x')
+
+ins.hist
+```
+
+### 1.4.3 Bar Chart
+
+```{r summary-bar}
+ins.b <- ins %>%
+  select(c(2, 4:6)) %>%
+  gather()
+
+ins.bar <- ggplot(data = ins.b, mapping = aes(x = value)) + 
+  geom_bar() + 
+  facet_wrap(~key, scales = 'free_x')
+
+ins.bar
+```
+
+### 1.4.4 Correlation
+
+#### 1.4.4.1 Correlation Heatmap
+
+```{r summary-correlation-heatmap}
+ins.c <- mutate_all(ins, funs(as.numeric))
+corrplot(cor(ins.c), method = "color", type = "lower")
+```
+
+#### 1.4.4.2 Correlation (with dependent) table
+
+```{r summary-correlation-table}
+
+corp <- apply(ins.c[, -7], 2, function(x) cor.test(x, y=ins.c$charges)$p.value)
+cortable <- cor(ins.c[, -7], ins.c$charges)
+kable(cbind(as.character(corp), cortable), col.names = c("P-value", "Correlation with dependent"))
+```
+
+Based on the above correlation analyses, one can see that most variables, especially `smoker` and `age`, are positively correlated with the dependent variable `charges`, while `region` has a negative correlation. 
+
+# 2. Model 1 - Base
+
+```{r model-one}
+m1 <- lm(formula = charges ~ .,
+         data = ins)
+summary(m1)
+```
+
+# 3. Model 2 - Including an interaction term
+
+For this model, we'll include the interaction term `age*bmi`, and see how it compares with the base model.
+```{r model-two}
+m2 <- lm(formula = charges ~ . + age*bmi,
+         data = ins)
+summary(m2)
+anova(m2, m1)
+```
+
+The model has a poorer adjusted r-squared, but a lower f-stat. Additionally, a chi-square test using the `anova` function tells us these models aren't very different, which suggests the additional interaction term does not add anything in terms of explanatory power. While the first model is not perfect (it would require some variable transformations to be used in production), it is somewhat preferred over this newer one.
+
+```{r model-one-lots}
+
+rp1 <- ggplot(m1, aes(.fitted, .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  labs(title = "Residuals vs Fitted")
+
+rp2 <- ggplot(m1, aes(.fitted, .stdresid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE)
+
+rp3 <- ggplot(m1) +
+  stat_qq(aes(sample = .stdresid)) +
+  geom_abline()
+
+rp4 <- ggplot(m1, aes(.fitted, sqrt(abs(.stdresid)))) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  labs(title = "Scale-Location")
+
+rp5 <- ggplot(m1, aes(seq_along(.cooksd), .cooksd)) +
+  geom_col() +
+  ylim(0, 0.0075) +
+  labs(title = "Cook's Distance")
+
+rp6 <- ggplot(m1, aes(.hat, .stdresid)) +
+  geom_point(aes(size = .cooksd)) +
+  geom_smooth(se = FALSE, size = 0.5) +
+  labs(title = "Residuals vs Leverage")
+
+rp7 <- ggplot(m1, aes(.hat, .cooksd)) +
+  geom_vline(xintercept = 0, colour = NA) +
+  geom_abline(slope = seq(0, 3, by = 0.5), colour = "white") +
+  geom_smooth(se = FALSE) +
+  geom_point() +
+  labs(title = "Cook's distance vs Leverage")
+
+rp8 <- ggplot(m1, aes(.resid)) +
+  geom_histogram(bins = 7, color="darkblue", fill="steelblue")
+
+grid.arrange(rp1, rp2, rp3, rp4, rp5, rp6, rp7, rp8, ncol = 2)
+```

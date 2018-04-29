@@ -1,0 +1,204 @@
+---
+title: "DATA 605 - Assignment 12"
+author: "Joshua Sturm"
+date: "April 29, 2018"
+output:
+  github_document:
+  html_document:
+    highlight: textmate
+    theme: sandstone
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: yes
+  pdf_document:
+    keep_tex: yes
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F, collapse = T, cache = T)
+```
+
+```{r load-libraries}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(gvlma)
+library(gridExtra)
+```
+
+# Objective
+- 1. Provide a scatterplot of LifeExp~TotExp, and run simple linear regression. Do not transform the
+variables. Provide and interpret the F statistics, R^2, standard error,and p-values only. Discuss
+whether the assumptions of simple linear regression met.
+- 2. Raise life expectancy to the 4.6 power (i.e., LifeExp^4.6). Raise total expenditures to the 0.06
+power (nearly a log transform, TotExp^.06). Plot LifeExp^4.6 as a function of TotExp^.06, and r
+re-run the simple regression model using the transformed variables. Provide and interpret the F
+statistics, R^2, standard error, and p-values. Which model is "better?"
+- 3. Using the results from 3, forecast life expectancy when TotExp^.06 =1.5. Then forecast life
+expectancy when TotExp^.06=2.5.
+- 4. Build the following multiple regression model and interpret the F Statistics, R^2, standard error,
+and p-values. How good is the model?\
+LifeExp = b0+b1 x PropMd + b2 x TotExp +b3 x PropMD x TotExp
+- 5. Forecast LifeExp when PropMD=.03 and TotExp = 14. Does this forecast seem realistic? Why
+or why not?
+
+# Import dataset
+```{r import-dataset}
+who <- read.csv("who.csv", na.strings = c("", "NA", "NaN"))
+```
+
+## Data Dictionary
+```{r data-dictionary}
+defs <- c("Name of the country",
+          "Average life expectancy for the country in years",
+          "Proportion of those surviving to one year or more",
+          "Proportion of those surviving to five years or more",
+          "Proportion of the population without TB",
+          "Proportion of the population who are MDs",
+          "Proportion of the population who are RNs",
+          "Mean personal expenditures on healthcare in US dollars at average exchange rate",
+          "Mean government expenditures per capita on healthcare, US dollars at average exchange rate",
+          "Sum of personal and government expenditures")
+
+who.dict <- data.frame(names(who), defs, stringsAsFactors = F)
+names(who.dict) <- c("Variable Name", "Definition")
+
+kable(who.dict, format = "latex", booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "scale_down"))
+```
+
+```{r predict-plots-function}
+
+pplots <- function(model){
+rp1 <- ggplot(model, aes(.fitted, .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  labs(title = "Residuals vs Fitted")
+
+rp2 <- ggplot(model, aes(.fitted, .stdresid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE)
+
+rp3 <- ggplot(model) +
+  stat_qq(aes(sample = .stdresid)) +
+  geom_abline()
+
+rp4 <- ggplot(model, aes(.fitted, sqrt(abs(.stdresid)))) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  labs(title = "Scale-Location")
+
+rp5 <- ggplot(model, aes(seq_along(.cooksd), .cooksd)) +
+  geom_col() +
+  ylim(0, 0.0075) +
+  labs(title = "Cook's Distance")
+
+rp6 <- ggplot(model, aes(.hat, .stdresid)) +
+  geom_point(aes(size = .cooksd)) +
+  geom_smooth(se = FALSE, size = 0.5) +
+  labs(title = "Residuals vs Leverage")
+
+rp7 <- ggplot(model, aes(.hat, .cooksd)) +
+  geom_vline(xintercept = 0, colour = NA) +
+  geom_abline(slope = seq(0, 3, by = 0.5), colour = "white") +
+  geom_smooth(se = FALSE) +
+  geom_point() +
+  labs(title = "Cook's distance vs Leverage")
+
+rp8 <- ggplot(model, aes(.resid)) +
+  geom_histogram(bins = 7, color="darkblue", fill="steelblue")
+
+grid.arrange(rp1, rp2, rp3, rp4, rp5, rp6, rp7, rp8, ncol = 2)
+}
+```
+
+## Data Structure
+```{r data-structure}
+kable(psych::describe(who), format = "latex", booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "scale_down"))
+```
+
+The dataset has `r ncol(who) - 1` predictor variables, and `r nrow(who)` cases. Each case represents a country in the world, with different statistics about their quality of healthcare.
+
+# 1.
+```{r scatterplot-lifexp-totexp}
+ggplot(data = who, aes(x = TotExp, y = LifeExp)) +
+  geom_point()
+```
+
+```{r simple-regression}
+model1 <- lm(formula =  LifeExp ~ TotExp,
+             data = who)
+summary(model1)
+pplots(model1)
+```
+
+The F-statistic for this model is `r summary(model1)$fstatistic[[1]]`, and the p-value is $`r summary(model1)$coefficients[2,4]`$. This tells us that the relationship between the variables `LifeExp` and `TotExp` is likely not due to chance.
+
+With a low r-squared value of `r summary(model1)$r.squared`, the model is only able to explain $\approx 25\%$ of the variability. Furthermore, since the residuals are not normally distributed, as can be seen in the plots, this model is insufficient to explain the relationship between the data.
+
+We can make use of the `gvlma` package to confirm our interpretation.
+
+```{r gvlma-model-one}
+gvlma(model1)
+```
+
+# 2.
+```{r model-two}
+# Transform variables
+m2.LifeExp <- who$LifeExp^(4.6)
+m2.TotExp <- who$TotExp^(0.06)
+
+model2 <- lm(formula =  m2.LifeExp ~ m2.TotExp)
+summary(model2)
+pplots(model2)
+gvlma(model2)
+```
+
+Other than the higher standard error of `r as.integer(summary(model2)$sigma)`, this model performs considerably better than the original one. It has an f-statistic of `r summary(model2)$fstatistic[[1]]` and a p-value of $`r as.integer(summary(model2)$coefficients[2,4])`$. It has a much higher r-squared value of `r summary(model2)$r.squared`, which tells us that it's significantly better at explaining the variability in the data. From the summary plots, the residuals appear more normal, and randomly distributed, than in the first model.
+
+In summary, this model outperforms the first by most measures, but still fails most assumptions needed for linear regression.
+
+# 3.
+
+## 3.1
+The equation from model 2 is $y^{4.6} =$ `r as.integer(summary(model2)$coefficients[[1]])` + `r as.integer(summary(model2)$coefficients[[2]])`$\cdot x^{0.06}$.
+
+$y^{4.6} =$ `r as.integer(summary(model2)$coefficients[[1]])` + `r as.integer(summary(model2)$coefficients[[2]])` $\cdot (1.5) \ \to$ `r as.integer(summary(model2)$coefficients[[1]] + summary(model2)$coefficients[[2]]*(1.5))`
+
+$y = \text{LifeExp} = \sqrt[4.6]{193562414} \approx$ `r (193562414)^(1/4.6)`
+
+## 3.2
+$y^{4.6} =$ `r as.integer(summary(model2)$coefficients[[1]])` + `r as.integer(summary(model2)$coefficients[[2]])` $\cdot (2.5) \ \to$ `r as.integer(summary(model2)$coefficients[[1]] + summary(model2)$coefficients[[2]]*(2.5))`
+
+$y = \text{LifeExp} = \sqrt[4.6]{813622629} \approx$ `r (813622629)^(1/4.6)`
+
+# 4.
+We want to build the model LifeExp = b0+b1 x PropMd + b2 x TotExp +b3 x PropMD x TotExp.
+
+```{r model-three}
+model3 <- lm(formula =  LifeExp ~ PropMD + TotExp + PropMD*TotExp,
+             data = who)
+summary(model3)
+pplots(model3)
+gvlma(model3)
+```
+
+The F-statistic for this model is `r summary(model3)$fstatistic[[1]]`, and the p-value is $`r as.integer(summary(model3)$coefficients[2,4])`$. With a low r-squared value of `r summary(model1)$r.squared`, the model is only able to explain $\approx 35\%$ of the variability. There are a few outliers in this model, which introduces a lot of skew in the residual plots, making them not normally distributed. Overall, this model fared similarly to the first, and worse than the second.
+
+# 5.
+PropMD = 0.03, TotExp = 14.
+
+Using model 3:
+
+LifeExp = `r summary(model3)$coefficients[[1]]` + `r summary(model3)$coefficients[[2]]`$\cdot (0.03)$ + `r round(summary(model3)$coefficients[[3]], 4)`$\cdot (14)$ `r summary(model3)$coefficients[[4]]`$\cdot (0.03 \cdot 14)$
+
+LifeExp $\approx$ `r summary(model3)$coefficients[[1]] + summary(model3)$coefficients[[2]]*(0.03) +  summary(model3)$coefficients[[3]]*(14) - summary(model3)$coefficients[[4]]*(0.03 * 14)`.
+
+This prediction does not seem realistic, since the total personal and government expenditure is near the minimum, yet life expentancy exceeds that of any country in the dataset.

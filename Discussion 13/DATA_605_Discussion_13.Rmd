@@ -1,0 +1,68 @@
+---
+title: "DATA_605_Discussion_13"
+author: "Joshua Sturm"
+date: "May 3, 2018"
+output:
+  html_document:
+    highlight: textmate
+    theme: sandstone
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: yes
+  pdf_document:
+    keep_tex: yes
+  github_document:
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F, collapse = T)
+```
+
+Section 4.1, Page 163, Exercise #7
+
+Use 5 iterations of Newton’s Method with the given initial approximation to approximate the root. Compare it to the known value of the root.
+
+```{r}
+library(ggplot2)
+library(knitr)
+```
+
+\[
+f(x) = \ln(x), \ \ \ x_0 = 2
+\]
+
+Formula for Newton's Method: 
+
+\[
+x_{n+1} = x_n - \frac{f(x_n)}{f'(x_n)}
+\]
+
+
+```{r graph}
+ggplot(data.frame(x = c(0, 10)), aes(x)) + 
+  stat_function(fun = function(x) log(x)) +
+  scale_x_continuous(breaks = c(1:10)) +
+  geom_line(aes(y = 0))
+```
+
+\[ 
+\dfrac{\mathrm{d}}{\mathrm{d}x}  = \frac{1}{x}
+\]
+
+```{r newton}
+x0 <- 2
+iters <- 5
+newts <- c(0)
+
+for(iter in 1:5){
+  newt <- x0 - (log(x0)/(1/x0))
+  newts[iter] <- newt
+  x0 <- newt
+}
+
+kable(cbind(1:5, newts, 1, 1-newts), col.names = c("Iteration", "Newton Approximation", "Actual Value", "Difference"), align = "c")
+```

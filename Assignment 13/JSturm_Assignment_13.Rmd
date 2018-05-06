@@ -1,0 +1,226 @@
+---
+title: "JSturm_Assignment_13"
+author: "Joshua Sturm"
+date: "May 4, 2018"
+output:
+  github_document:
+  html_document:
+    highlight: textmate
+    theme: sandstone
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: yes
+  pdf_document:
+    keep_tex: yes
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F, collapse = T)
+```
+
+```{r}
+library(ggplot2)
+```
+
+# 1. 
+Use integration by substitution to solve the integral $\int 4e^{-7x}dx$
+
+## 1. Solution
+Let $u = -7x$. Then $du = -7 dx \ \to \ dx = \frac{du}{-7}$.
+
+Our integral is now $\int \frac{4e^{u}du}{-7}$. Taking out the constants: $\frac{4}{-7}\int e^u du$.
+
+Replacing $u$ with our original substitution: $\frac{-4}{7}e^{-7x} + C$.
+
+# 2. 
+Biologists are treating a pond contaminated with bacteria. The level of contamination is changing at a rate of $\frac{\text{d}N}{\text{d}t} = -\frac{3150}{t^4} - 220$ bacteria per cubic centimeter per day, where $t$ is the number of days since treatment began. Find a function $N(t)$ to estimate the level of contamination if the level after day 1 was 6530 per cubic centimeter.
+
+## 2. Solution
+\[
+\frac{\text{d}N}{\text{d}t} = -\frac{3150}{t^4} - 220 \ \to \ \text{d}N = (-\frac{3150}{t^4}-220)\text{d}t
+\]
+
+To find $N$, we can take the antiderivative, i.e. the integral.
+
+$N = \int (-\frac{3150}{t^4}-220)\text{d}t \ \ = \int -3150(t^{-4}) \text{d}t - \int 220\text{d}t$
+
+Using the power rule for integration: $N = \frac{-3150}{-3}(t^{-3}) - 220t + C$.
+
+Solving for $N(1) = 6530$:
+
+$N(1) \frac{-3150}{-3}(1^{-3}) - 220(1) + C = 6530$
+
+$C = 6530 - 1050 + 220 = 5700$.
+
+$N(t) = -1050(t^{-3}) - 200(t) + 5700$.
+
+# 3.
+Find the total area of the red rectangles in the figure below, where the equation of the lines is $f(x) = 2x - 9$.
+
+![](3_graph.png){width=250px}
+
+## 3. Solution
+The equation is given as $2x - 9$, and the ends of the rectangles look to be 4.5 and 8.5. Since we're looking for the area, we can integrate this function over these boundaries.
+
+\[
+\int_{4.5}^{8.5}(2x - 9)dx
+\]
+
+Using the power rule for integration:
+
+\[
+(x^2 - 9x)\Big|_{4.5}^{8.5} = \Big[(8.5)^2 - 9(8.5)\Big] - \Big[(4.5)^2 - 9(4.5)\Big]
+\\
+= [72.25 - 76.5] - [20.25 - 40.5] = 16
+\]
+
+# 4.
+Find the area of the region bounded by the graphs of the given equations
+
+\[
+y = x^2 -2x -2, \ \ \ y = x + 2
+\]
+
+## 4. Solution
+
+```{r fourgraph}
+f1 <- function(x) {x^2 - 2*x - 2}
+f2 <- function(x) {x + 2}
+funcShaded <- function(x) {
+    y <- f1(x)
+    y[x < -1 | x > 4] <- NA
+    return(y)
+}
+
+
+ggplot(data.frame(x=c(-1, 4)), aes(x = x)) +
+  stat_function(fun = funcShaded, geom = "polygon", fill = "grey", alpha = 0.7) +
+  stat_function(fun = f1, geom = "line", aes(colour = "f1")) +
+  stat_function(fun = f2, geom = "line", aes(colour = "f2"))
+```
+
+We're looking for the area between the two functions. The intersection points are (-1, 1) and (4, 6), which will serve as the boundaries.
+
+\[
+A = \int_{-1}^{4} x + 2 \ dx  \ - \ \int_{-1}^{4}x^2 - 2x - 2 dx \\
+A = \Big[\frac{1}{2}x^2 + 2x\Big]_{-1}^{4} - \Big[\frac{1}{3}x^3 - x^2 - 2x\Big]_{-1}^{4} \\
+= -\frac{1}{3}x^3 + \frac{3}{2}x^2 + 4x\Big|_{-1}^{4} \\
+\]
+
+$\approx$ `r ((-1/3)*(4^3) + (3/2)*(4^2) + 4*4) - ((-1/3)*((-1)^3) + (3/2)*((-1)^2) + 4*-1)`
+
+# 5.
+A beauty supply store expects to sell 110 flat irons during the next year. It costs \$3.75 to store one flat iron for one year. There is a fixed cost of \$8.25 for each order. Find the lot size and the number of orders per year that will minimize inventory costs.
+
+## 5. Solution
+I was unsure how to solve this problem, so I googled how to optimize inventory, and stumbled upon [economic order quantity (EOQ).](https://en.wikipedia.org/wiki/Economic_order_quantity)
+
+Quoting the article:
+
+- $P$ = purchase unit price, unit production cost
+- $Q$ = order quantity.
+- $Q^*$ = optimal order quantity.
+- $D$ = annual demand quantity.
+- $K$ = fixed cost per order, setup cost (not per unit, typically cost of ordering and shipping and handling. This is not the cost of goods)
+- $h$ = annual holding cost per unit, also known as carrying cost or storage cost (capital cost, warehouse space, refrigeration, insurance, etc. usually not related to the unit production cost)
+
+The single-item EOQ formula finds the minimum point of the following cost function:
+
+Total Cost = purchase cost or production cost + ordering cost + holding cost
+
+Where:
+
+- Purchase cost: This is the variable cost of goods: purchase unit price × annual demand quantity. This is P × D
+- Ordering cost: This is the cost of placing orders: each order has a fixed cost K, and we need to order D/Q times per year. This is K × D/Q
+- Holding cost: the average quantity in stock (between fully replenished and empty) is Q/2, so this cost is h × Q/2
+
+$TC = PD + \frac{DK}{Q} + \frac{hQ}{2}$.
+
+$\frac{\text{d}}{\text{d}Q} = -\frac{DK}{Q^2} + \frac{h}{2}$.
+
+We next set this equal to zero, and solve for $Q$ in order to find the function minimum.
+
+$-\frac{DK}{Q^2} + \frac{h}{2} = 0$.
+
+$Q^{*2} = \frac{2DK}{h} \ \to \ Q^* = \sqrt{\frac{2DK}{h}}$
+
+We are given these variables, so we just need to plug them into the formula.
+
+$D = 110$.
+
+$K = 8.25$.
+
+$h = 3.75$.
+
+\[
+Q^* = \sqrt{\frac{2\cdot 110\cdot 8.25}{3.75}} = \sqrt{\frac{1815}{3.75}} = \sqrt{484} = 22.
+\]
+
+We found 22 to be the lot size per order.
+
+We are given that the store expects to sell $n = 110$ flat irons. If there are $x$ number of irons in each order, our equation is $22\cdot x = 110 \ \to \ x = \frac{110}{22} = 5$.
+
+So to minimize inventory costs, the store should make 5 orders of 22 irons per year.
+
+# 6.
+Use integration by parts to solve the integral below:
+\[
+\int \ln(9x)\cdot x^6 \ dx
+\]
+
+## 6. Solution
+The formula for integration by parts is:
+\[
+\int u \ dv = uv - \int v \ du
+\]
+
+Let $u = \ln(9x)$. Using the chain rule $du = \frac{1}{9x} \cdot 9 \ dx = \frac{1}{x} \ dx$.
+
+Let $dv = x^6$, then $v = \int x^6 = \frac{x^7}{7}$.
+
+Plugging this into the formula:
+
+\[
+\ln(9x)\cdot \frac{x^7}{7} - \int \frac{x^7}{7}\cdot \frac{1}{x} \ dx
+\]
+
+We can pull out the constant:
+
+\[
+\ln(9x)\cdot \frac{x^7}{7} - \frac{1}{7} \int \frac{x^7}{x} \ dx = \ln(9x)\cdot \frac{x^7}{7} - \frac{1}{7} \int x^6 \ dx
+\]
+
+Using the power rule for integration:
+
+\[
+\ln(9x)\cdot \frac{x^7}{7} - \frac{1}{7} \Big(\frac{x^7}{7}\Big) + C
+\]
+
+\[
+= \ln(9x)\cdot \frac{x^7}{7} - \frac{x^7}{49} + C
+\]
+
+# 7.
+Determine whether $f(x)$ is a probability density function on the interval $[1, e^6]$. If not, determine the value of the definite integral.
+
+\[
+f(x) = \frac{1}{6x}
+\]
+
+## 7. Solution
+There are two conditions for a probability density function:
+
+- $f(x) \geq 0 \ \ \ \forall x$
+- $\int_{-\infty}^{\infty}f(x) \ dx = 1$
+
+\[
+\int_{1}^{e^6} \frac{1}{6x} \ dx = \frac{1}{6} \int_{1}^{e^6}\frac{1}{x} \ dx \\
+= \frac{1}{6}[\ln(x)]_{1}^{e^6} \\
+= \frac{\ln(e^6) - \ln(1)}{6} = \frac{6\cdot \ln(e) - 0}{6} = \frac{6}{6} = 1
+\]
+
+Since the area sums up to 1, we conclude that $f(x)$ is a pdf on the interval $[1, e^6]$.

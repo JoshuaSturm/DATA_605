@@ -1,0 +1,71 @@
+---
+title: "DATA_605_Discussion_14"
+author: "Joshua Sturm"
+date: "May 9, 2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: textmate
+    theme: sandstone
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+```
+
+Section 8.1, Exercise 39, Page 394
+
+Prove that if 
+\[
+\lim_{n \to \infty} |a_n| = 0 \text{, then } \lim_{n \to \infty}a_n = 0
+\]
+
+We can solve this using a combination of the [Triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality), and the [Squeeze Theorem](https://en.wikipedia.org/wiki/Squeeze_theorem).
+
+Firstly, we note that the following is true:
+
+\[
+-|a_n| \leq a_n \leq |a_n|
+\]
+
+Then, if
+
+\[
+\lim_{n\to\infty} -|a_n| = 0
+\]
+
+this must be true as well
+
+\[
+\lim_{n\to\infty} |a_n| = 0
+\]
+
+And so, by the squeeze theorem, we get
+
+\[
+\lim_{n\to\infty} a_n = 0
+\]
+
+An alternative way to look at this using the definition of a limit:
+
+If
+
+\[
+\lim_{n\to\infty} |a_n| = 0
+\]
+
+then $\exists N \in \mathbb{N} \ni n \geq N$, and $|a_n - 0| \leq \ \epsilon \ \forall \ \epsilon > 0$. 
+
+Similarly, if
+
+\[
+\lim_{n\to\infty}a_n = 0
+\]
+
+then $\exists N \in \mathbb{N} \ni n \geq N$, and $\Big{|}|a_n| - 0 \Big{|} \leq \ \epsilon \ \forall \ \epsilon > 0$.
+
+But $\Big{|}|a_n| - 0 \Big{|} = \Big{|}|a_n|\Big{|} = |a_n| = |a_n - 0|$.
+
+Thus, they're essentially equal.

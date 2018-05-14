@@ -1,0 +1,150 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={DATA\_605\_Assignment\_14},
+            pdfauthor={Joshua Sturm},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{DATA\_605\_Assignment\_14}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Joshua Sturm}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{May 13, 2018}
+
+
+\begin{document}
+\maketitle
+
+\hypertarget{task}{%
+\section{Task}\label{task}}
+
+This week, we'll work out some Taylor Series expansions of popular
+functions.
+
+\[
+f(x) = \frac{1}{(1-x)}
+\]
+
+\[
+f(x) = e^x
+\]
+
+\[
+f(x) = \ln(1 + x)
+\]
+
+For each function, only consider its valid ranges as indicated in the
+notes when you are computing the Taylor Series expansion. Please submit
+your assignment as a R-Markdown document.
+
+\hypertarget{section}{%
+\section{1.}\label{section}}
+
+The formula for a Taylor Series centered about \(c\) is \begin{gather*}
+f(x) = f(c) + f'(c)(x-c) + \frac{f''(c)}{2!} + \cdot\cdot\cdot \\
+= \sum_{n=0}^{\infty}\frac{f^{(n)}(c)}{n!}x^n
+\end{gather*}
+
+If this is centered about 0, aka a Maclaurin Series, we get:
+
+\begin{gather*}
+1 + x + x^2 + x^3 + \cdot\cdot\cdot \\
+= \sum_{n = 0}^{\infty}x^n \ \ \ x \in (-1, 1)
+\end{gather*}
+
+This is basically a geometric series.
+
+\hypertarget{section-1}{%
+\section{2.}\label{section-1}}
+
+Centered about 0:
+
+\begin{gather*}
+1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdot\cdot\cdot \\
+= \sum_{n = 0}^{\infty} \frac{x^n}{n!} \ \ \ x \in \mathbb{R}
+\end{gather*}
+
+\hypertarget{section-2}{%
+\section{3.}\label{section-2}}
+
+Centered about 0:
+
+\begin{gather*}
+0 + x - \frac{1}{2!}x^2 + \frac{2}{3!}x^3 - \frac{6}{4!}x^4 + \cdot\cdot\cdot \\
+= \sum_{n = 0}^{\infty}(-1)^{n+1}\frac{x^n}{n} = \sum_{n = 0}^{\infty}(-1)^{n-1}\frac{x^n}{n} \ \ \ x \in (-1, 1]
+\end{gather*}
+
+
+\end{document}

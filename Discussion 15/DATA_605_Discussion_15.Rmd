@@ -1,0 +1,39 @@
+---
+title: "DATA 605 - Discussion 15"
+author: "Joshua Sturm"
+date: "May 16, 2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: textmate
+    theme: sandstone
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F)
+```
+
+Section 12.3, Exercise 28, Page 679
+
+# 28.
+Form a function $z = f(x,y)$ such that $f_x = x + y$ and $f_y = x + y$.
+
+## Solution
+
+Firstly, since the second partials are equal to each other (0 in this case), by Schwarz's Theorem, $f(x,y)$ exists.
+
+If $f_x = x + y$, then $f(x,y) = \frac{1}{2}x^2 + xy + c(y) + A$.
+
+If $f_y = x + y$, then $f(x,y) = xy + \frac{1}{2}y^2 + d(x) + B$.
+
+Combining these, we get $f(x,y) = \frac{1}{2}x^2 + xy + c(y) + A = xy + \frac{1}{2}y^2 + d(x) + B$.
+
+So our original function is $z = f(x,y) = \frac{1}{2}x^2 + xy + \frac{1}{2}y^2$.
+
+\ 
+
+\ 
+
+Reference: https://math.stackexchange.com/questions/2439726/determine-whether-fx-y-exists-given-the-partial-derivatives

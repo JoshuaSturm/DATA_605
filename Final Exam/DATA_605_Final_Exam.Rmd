@@ -1,0 +1,22 @@
+---
+title: "DATA 605 - Final Exam"
+author: "Joshua Sturm"
+date: "May 17, 2018"
+output:
+  pdf_document:
+    keep_tex: yes
+  html_document:
+    highlight: textmate
+    theme: sandstone
+    code_folding: show
+    toc: yes
+    toc_float: yes
+    smart: yes
+  github_document:
+always_allow_html: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F, collapse = T, cache = T)

@@ -19,4 +19,494 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = F, warning = F, message = F, collapse = T, cache = T)
+knitr::opts_chunk$set(echo = F, warning = F, message = F, collapse = T, cache = F)
+```
+
+```{r load-packages}
+# Note I had to load the MASS package prior to the tidyverse packages
+# to prevent conflicts amongst functions, e.g. dplyr::select, MASS::select
+library(MASS)
+library(tidyverse)
+library(magrittr)
+library(cowplot)
+```
+
+# 1. Kaggle Data
+You are to register for Kaggle.com (free) and compete in the House Prices: Advanced Regression Techniques competition. https://www.kaggle.com/c/house-prices-advanced-regression-techniques. I want you to do the following
+
+- Pick one of the quantitative independent variables from the training data set (train.csv), and define that variable as X. Make sure this variable is skewed to the right!
+
+- Pick the dependent variable and define it as Y.
+
+```{r import-data}
+train <- read_csv("https://raw.githubusercontent.com/JoshuaSturm/DATA_605/master/Final%20Exam/data/train.csv", na = c("", "NA"))
+test <- read_csv("https://raw.githubusercontent.com/JoshuaSturm/DATA_605/master/Final%20Exam/data/test.csv", na = c("", "NA"))
+```
+
+Since the requirement is to pick an independent variables that is skewed to the right, I'll begin by plotting a histogram for each (numeric) variable.
+
+```{r train-histogram, fig.width=12, fig.height=8}
+train.h <- train %>%
+  select_if(is.numeric) %>%
+  select(-matches("*Year* | *yr*"), -c(Id, SalePrice)) %>%
+  gather()
+
+ggplot(data = train.h, mapping = aes(x = value)) + 
+  geom_histogram(bins = 10) +
+  facet_wrap(~key, scales = 'free', ncol = 4)
+
+rm(train.h)
+```
+
+I'm going to use `OpenPorchSF` as my independent variable. Of course, since we're trying to predict the house's sale price, `SalePrice` will be the dependent variable.
+
+# 2. Probability
+Calculate as a minimum the below probabilities a through c. Assume the small letter "x" is estimated as the 1st quartile of the X variable, and the small letter "y" is estimated as the 1st quartile of the Y variable. Interpret the meaning of all probabilities. In addition, make a table of counts as shown below.
+
+\begin{center}
+a. $P(X > x | Y > y)$  \hspace{20pt} b. $P(X > x, Y > Y)$ \hspace{20pt} c. $P(X < x | Y > y)$
+\end{center}
+
+\ 
+\ 
+
+## a.
+\[
+P(X > x | Y > y) = \frac{P(X > x \cap Y > y)}{P(Y > y)}
+\]
+
+In words, we're looking for the conditional probability that the `OpenPorchSF` variable is greater than its first quantile, **given** that `SalePrice` is greather than its first quantile. 
+
+```{r 2a}
+# Get first quantile for each variable
+x_fq <- quantile(train$OpenPorchSF, 0.25)
+y_fq <- quantile(train$SalePrice, 0.25)
+
+denominator <- train[train$SalePrice > y_fq, ]
+numerator <- denominator[denominator$OpenPorchSF > x_fq, ]
+
+paste0("Probability = ", nrow(numerator) / nrow(denominator))
+
+rm(denominator, numerator)
+```
+
+## b.
+\[
+P(X > x, Y > Y) = P(X > x \cap Y > y)
+\]
+
+```{r 2b}
+jointp <- train[train$OpenPorchSF > x_fq & train$SalePrice > y_fq, ]
+
+paste0("Probability = ", nrow(jointp) / nrow(train))
+
+rm(jointp)
+```
+
+## c.
+\[
+P(X < x | Y > y) = \frac{P(X < x \cap Y > y)}{P(Y > y)}
+\]
+
+```{r 2c}
+denominator <- train[train$SalePrice > y_fq, ]
+numerator <- denominator[denominator$OpenPorchSF < x_fq, ]
+
+paste0("Probability = ", nrow(numerator) / nrow(denominator))
+```
+
+```{r probability-table}
+oo <- nrow(train[train$OpenPorchSF <= x_fq & train$SalePrice <= y_fq, ])
+ot <- nrow(train[train$OpenPorchSF <= x_fq & train$SalePrice > y_fq, ])  
+or <- oo + ot  
+to <- nrow(train[train$OpenPorchSF > x_fq & train$SalePrice <= y_fq, ])
+tt <- nrow(train[train$OpenPorchSF > x_fq & train$SalePrice > y_fq, ])
+tr <- to + tt
+ro <- oo + to
+rt <- ot + tt
+rr <- ro + rt  
+```
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+x/y & $\leq$ 1st quartile & $>$ 1st quartile & Total \\ \hline
+$\leq$ 1st quartile & `r oo` & `r ot` & `r or` \\ \hline
+$>$ 1st quartile & `r to`  &  `r tt` & `r tr` \\ \hline
+Total & `r ro` & `r rt` & `r rr` \\ \hline
+\end{tabular}
+\end{center}
+
+## 2.2 Independence
+Does splitting the training data in this fashion make them independent? Let A be the new variable
+counting those observations above the 1st quartile for X, and let B be the new variable counting those
+observations above the 1st quartile for Y. Does P(AB)=P(A)P(B)? Check mathematically, and then
+evaluate by running a Chi Square test for association.
+
+```{r independence}
+paste0("A = ", tr)
+paste0("B = ", rt)
+pa <- tr/rr
+pb <- rt/rr
+pab <- tt/rr
+paste0("P(A) = ", pa)
+paste0("P(B) = ", pb)
+paste0("P(A)P(B) = ", pa*pb)
+paste0("P(AB) = ", pab)
+
+all.equal(pa*pb, pab)
+```
+
+We can see that the two are not equal, that is, $P(AB) \neq P(A)\times P(B)$. So we've shown mathematically that they're not independent.
+
+```{r chi-sq-test}
+chisq.test(train$OpenPorchSF, train$SalePrice)
+```
+
+With a p-value < 0.05, we can reject the null hypothesis that the variables are independent, and conclude that they are dependent.
+
+# 3. Descriptive and Inferential Statistics
+Provide univariate descriptive statistics and appropriate plots for the training data set. Provide a scatterplot of X and Y. Derive a correlation matrix for any THREE quantitative variables in the dataset. Test the hypotheses that the correlations between each pairwise set of variables is 0 and provide a 92% confidence interval. Discuss the meaning of your analysis. Would you be worried about familywise error? Why or why not?
+
+For brevity's sake, I'll only summarize the last 10 (numeric) columns.
+```{r summary-data}
+train %>%
+  select_if(is.numeric) %>%
+  psych::describe() %>%
+  tail(10)
+```
+
+I've already plotted histograms in [part 1][1. Kaggle Data]. I will do boxplots for numeric variables, and bar charts for categorical data.
+
+```{r boxplots}
+train.bp <- train %>%
+  select_if(is.numeric) %>%
+  select(-matches("*Year* | *yr*"), -c(Id, SalePrice, LotArea)) %>%
+  gather()
+
+ggplot(train.bp, aes(x = key, y = value)) +
+  labs(x = "variable", title = "Training Data Boxplot") +
+  geom_boxplot(outlier.colour = "red", outlier.shape = 1) +
+  theme(axis.text.x = element_text(angle = 90))
+
+rm(oo, or, ot, pa, pab, pb, ro, rr, rt, to, tr, tt, x_fq, y_fq, train.bp, denominator, numerator)
+```
+
+```{r bar-charts, fig.width=14, fig.height=20}
+train.bc <- train %>%
+  select_if(is.character) %>%
+  gather()
+
+ggplot(data = train.bc, mapping = aes(x = value)) + 
+  geom_bar() + 
+  facet_wrap(~key, scales = 'free', ncol = 4) +
+  theme(axis.text.x = element_text(angle = 90))
+
+rm(train.bc)
+```
+
+```{r scatter-xy}
+ggplot(data = train, aes(x = OpenPorchSF, y = SalePrice)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+```{r correlation-matrix}
+colnames(train)[colnames(train) == '1stFlrSF'] <- 'firstFlrSF'
+colnames(train)[colnames(train) == '2ndFlrSF'] <- 'secFlrSF'
+colnames(train)[colnames(train) == '3SsnPorch'] <- 'threeSsnPorch'
+
+colnames(test)[colnames(test) == '1stFlrSF'] <- 'firstFlrSF'
+colnames(test)[colnames(test) == '2ndFlrSF'] <- 'secFlrSF'
+colnames(test)[colnames(test) == '3SsnPorch'] <- 'threeSsnPorch'
+
+
+cors <- cor(train[, c("MSSubClass", "firstFlrSF", "GrLivArea")])
+```
+
+$H_0:$ The correlation coefficient is 0, which is to say that these variables aren't related.
+$H_1:$ The correlation coefficient is not 0.
+
+```{r correlation-tests}
+cor.test(train$MSSubClass, train$firstFlrSF, conf.level = 0.92)
+
+cor.test(train$MSSubClass, train$GrLivArea, conf.level = 0.92)
+
+cor.test(train$firstFlrSF, train$GrLivArea, conf.level = 0.92)
+```
+
+Since the p-value for all three tests is much smaller than $\alpha = 0.08$, we can reject the null hypothesis, and conclude that there is some correlation between the variables.
+
+According to [this wikipedia article](https://en.wikipedia.org/wiki/Family-wise_error_rate), familywise error is a type 1 error, which occurs when one rejects a true null hypothesis (aka a false positive). The probability of making one or more of these can be controlled by ensuring
+\[
+FWER = P(V \geq 1) = 1 - P(v = 0) \leq \alpha
+\]
+
+$FWER = 1-(1-0.08)^3 =$ `r 1-(1-0.08)^3`
+
+So we should proceed with caution, since there is a ~22% chance of making a type 1 error.
+
+# 4. Linear Algebra and Correlation
+Invert your $3 \times 3$ correlation matrix from above. (This is known as the precision matrix and contains variance inflation factors on the diagonal.) Multiply the correlation matrix by the precision matrix, and then multiply the precision matrix by the correlation matrix. Conduct LU decomposition on the matrix.
+
+Invert our correlation matrix
+```{r invert-matrix}
+precm <- solve(cors)
+```
+
+Multiplying the correlation matrix by the precision (inverted) matrix
+```{r matrix-multiplication}
+round(cors %*% precm)
+round(precm %*% cors)
+```
+
+The result of the matrix multiplcation is the identity matrix.
+
+To perform the LU decomposition, I'll recycle the function I created for assignment 2.
+
+```{r lu-decomp}
+factorize <- function(mat){
+  L <- diag(nrow(mat))    # Create lower diagonal matrix of the same size
+  U <- mat
+
+  # If the leading entry [1,1] is not > 1, swap it with a row that has a pivot
+  if (U[1,1] == 0){
+    for (i in U[2,1]:U[nrow,1]){
+      if (U[i,1] != 0){
+        U[1,] <- U[i,]
+      }
+    }
+  }
+  # Loop through n-1 columns, n rows, get the multipler,
+  # Multiply to get the Upper Triangular matrix, and plug
+  # the multiplier into the Lower Triangular Matrix
+  for (k in 1:(nrow(U)-1)){
+    for (j in (k+1):(nrow(U))){
+      if (U[j,k] != 0){
+        mult <- U[j,k] / U[k,k]
+        U[j,] <- U[j,] - (mult * U[k,])
+        L[j,k] <- mult
+      }
+    }
+  }
+  
+  factored.matrix <- list(L, U)
+  
+  return(factored.matrix)
+}
+
+factorize(cors)
+```
+
+# 5. Calculus-Based Probability & Statistics
+Many times, it makes sense to fit a closed form distribution to data. For the first variable that you selected which is skewed to the right, shift it so that the minimum value is above zero as necessary. Then load the MASS package and run fitdistr to fit an exponential probability density function. (See https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/fitdistr.html ). Find the optimal value of $\lambda$ for this distribution, and then take 1000 samples from this exponential distribution using this value (e.g., rexp(1000, $\lambda$)). Plot a histogram and compare it with a histogram of your original variable. Using the exponential pdf, find the 5th and 95th percentiles using the cumulative distribution function (CDF). Also generate a 95% confidence interval from the empirical data, assuming normality. Finally, provide the empirical 5th percentile and 95th percentile of the data. Discuss.
+
+Since the minimum `OpenPorchSF` value is 0, I'll shift it to the right by 0.0001.
+
+```{r shift-variable}
+shifted <- train$OpenPorchSF- min(train$OpenPorchSF) + 0.0001
+expdf <- fitdistr(shifted, densfun = "exponential")
+lambda <- expdf$estimate
+lambdas <- rexp(1000, lambda)
+```
+
+The optimal lambda value is $\lambda =$ `r lambda`.
+
+```{r lambda-plot}
+plot_grid(ggplot() +
+  geom_histogram(aes(lambdas), fill=("blue"), col=("red"), alpha=(.2)),
+ggplot(data = train, aes(x = OpenPorchSF)) +
+  geom_histogram(fill = "blue", colour = "red", alpha = 0.2))
+```
+
+[From Wikipedia](https://en.wikipedia.org/wiki/Exponential_distribution#Quantiles), the Cumulative Distribution Function for the Exponential Distribution is:
+
+\[
+F(x;\lambda) = 1 - e^{-\lambda x}
+\]
+
+The quantile function is thus
+
+\[
+F^{-1}(p;\lambda) = \frac{-\ln(1 - p)}{\lambda}, \ \ \ \ 0 \leq p < 1
+\]
+
+```{r exp-quantile}
+paste0("5th Percentile of simulated data = ", log(1 - 0.05)/-lambda)
+paste0("95th Percentile of simulated data = ", log(1 - 0.95)/-lambda)
+
+paste0("5th Percentile of empirical data = ", quantile(shifted, 0.05))
+paste0("95th Percentile of empirical data = ", quantile(shifted, 0.95))
+```
+
+The formula for a confidence interval on normally distributed data is 
+\[
+x \pm t_{\frac{\sigma}{2}, n-1}\cdot \frac{s}{\sqrt{n}}
+\]
+
+The Z-value for a 95% confidence interval is 1.96.
+
+```{r conf-interval}
+paste0("95% Confidence interval for empirical data = (", mean(shifted) - 1.96 * sd(shifted) / sqrt(length(shifted)), ", ", mean(shifted) + 1.96 * sd(shifted) / sqrt(length(shifted)), ")")
+```
+
+5% of houses in the sample have an `OpenPorchSF` value of less than 0.0001$, while 95% are below 175.0501.
+\ 
+The 95% confidence interval tells us that with each sampling of the population (house prices), we are 95% sure the mean will be between ~43.26 and ~50.06.
+\ 
+Due to the large difference in percentile values between the sampled and empirical data, the exponential distribution may not be the best fit for our dataset.
+
+# 6. Modeling.
+Build some type of multiple regression model and submit your model to the competition board. Provide your complete model summary and results with analysis. Report your Kaggle.com user name and score.
+
+```{r variable-transformation}
+unloadNamespace("MASS")
+
+colSums(is.na(train))
+
+# Convert training dataset
+trf <- train %>%
+  select(-c(Id, Alley, BldgType, LotFrontage, LowQualFinSF, PoolArea, PoolQC, Utilities, MiscFeature, MiscVal, Street))
+
+trf <- trf[!(trf$YearBuilt %in% c(1893)), ]
+
+trf %<>%
+  mutate_if(is.character, as_factor)
+
+trf[, c("GarageYrBlt", "MoSold", "YrSold", "YearBuilt", "YearRemodAdd")] %<>%
+  mutate_all(as.factor)
+
+trf$MSSubClass <- factor(trf$MSSubClass, levels = c(20, 30, 40, 45, 50, 60, 70, 75, 80, 85, 90, 120, 150, 160, 180))
+
+trf[, c("OverallQual", "OverallCond", "ExterQual", "ExterCond")] %<>% 
+  mutate_all(as.ordered)
+
+trf <- mutate_at(trf, vars(matches("ExterQ.*")), fct_relevel, ... = "Fa", "TA", "Gd", "Ex")
+trf <- mutate_at(trf, vars(matches("ExterC.*")), fct_relevel, ... = "Po", "Fa", "TA", "Gd", "Ex")
+
+# trf$LotFrontage[is.na(trf$LotFrontage)] <- 0
+
+trf <- mutate_at(trf, colnames(trf)[colSums(is.na(trf)) > 0], addNA)
+
+trf$MasVnrArea %<>% as.numeric()
+
+
+# Convert testing dataset
+tf <- test %>%
+  select(-c(Id, Alley, BldgType, LotFrontage, LowQualFinSF, PoolArea, PoolQC, Utilities, MiscFeature, MiscVal, Street))
+
+tf <- tf[!(tf$MSSubClass %in% c(150)), ]
+tf <- tf[!(tf$MSZoning %in% c(NA)), ]
+tf <- tf[!(tf$YearBuilt %in% c(1879, 1895, 1896, 1901, 1902, 1907)), ]
+tf <- tf[!(tf$Exterior1st %in% c(NA)), ]
+tf <- tf[!(tf$KitchenQual %in% c(NA)), ]
+tf <- tf[!(tf$Functional %in% c(NA)), ]
+tf <- tf[!(tf$GarageYrBlt %in% c(1917, 1919, 1943, 2207)), ]
+tf <- tf[!(tf$SaleType %in% c(NA)), ]
+tf <- tf[!(tf$BsmtFinSF1 %in% c(NA)), ]
+tf <- tf[!(tf$BsmtFullBath %in% c(NA)), ]
+tf <- tf[!(tf$GarageCars %in% c(NA)), ]
+tf <- tf[!(tf$Condition2 %in% c("PosA")), ]
+
+
+tf %<>%
+  mutate_if(is.character, as_factor)
+
+tf[, c("GarageYrBlt", "MoSold", "YrSold", "YearBuilt", "YearRemodAdd")] %<>%
+  mutate_all(as.factor)
+
+tf$MSSubClass <- factor(tf$MSSubClass, levels = c(20, 30, 40, 45, 50, 60, 70, 75, 80, 85, 90, 120, 150, 160, 180))
+
+tf[, c("OverallQual", "OverallCond", "ExterQual", "ExterCond")] %<>% 
+  mutate_all(as.ordered)
+
+tf <- mutate_at(tf, vars(matches("ExterQ.*")), fct_relevel, ... = "Fa", "TA", "Gd", "Ex")
+tf <- mutate_at(tf, vars(matches("ExterC.*")), fct_relevel, ... = "Po", "Fa", "TA", "Gd", "Ex")
+
+# tf$LotFrontage[is.na(tf$LotFrontage)] <- 0
+
+tf <- mutate_at(tf, colnames(tf)[colSums(is.na(tf)) > 0], addNA)
+
+tf$MasVnrArea %<>% as.numeric()
+
+
+# m1 <- lm(SalePrice ~ ., data = trf)
+# 
+# summary(m1)
+# 
+# predict(m1, newdata = tf, type = "response")
+```
+
+There are many variables that can be recoded. Many columns can be converted from numeric to categorical (factor). Some columns, especially those with a high number of missing values, can be converted to factors with two levels - those with the property, and those without it (1 and 0). This will allow us to still use the variable, and not have to discard it. Lastly, we can convert four columns containing quality information to ordered factors.
+
+I won't be imputing any data in this model, since I believe the NAs are not due to missing data, but rather indicate that the property does not have that quality. For example, an NA in the `PoolQC` column probably means that the house doesn't have a pool.
+
+```{r model-df}
+m1 <- lm(SalePrice ~ ., data = trf)
+# summary(m1)
+# length(m1$coefficients) > m1$rank
+```
+
+```{r model-plots}
+rp1 <- ggplot(m1, aes(.fitted, .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE) +
+  labs(title = "Residuals vs Fitted")
+
+rp2 <- ggplot(m1, aes(.fitted, .stdresid)) +
+  geom_point() +
+  geom_hline(yintercept = 0) +
+  geom_smooth(se = FALSE)
+
+rp3 <- ggplot(m1) +
+  stat_qq(aes(sample = .stdresid)) +
+  geom_abline()
+
+rp4 <- ggplot(m1, aes(.fitted, sqrt(abs(.stdresid)))) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  labs(title = "Scale-Location")
+
+rp5 <- ggplot(m1, aes(seq_along(.cooksd), .cooksd)) +
+  geom_col() +
+  ylim(0, 0.0075) +
+  labs(title = "Cook's Distance")
+
+rp6 <- ggplot(m1, aes(.hat, .stdresid)) +
+  geom_point(aes(size = .cooksd)) +
+  geom_smooth(se = FALSE, size = 0.5) +
+  labs(title = "Residuals vs Leverage")
+
+rp7 <- ggplot(m1, aes(.hat, .cooksd)) +
+  geom_vline(xintercept = 0, colour = NA) +
+  geom_abline(slope = seq(0, 3, by = 0.5), colour = "white") +
+  geom_smooth(se = FALSE) +
+  geom_point() +
+  labs(title = "Cook's distance vs Leverage")
+
+rp8 <- ggplot(m1, aes(.resid)) +
+  geom_histogram(bins = 7, color="darkblue", fill="steelblue")
+
+plot_grid(rp1, rp2, rp3, rp4, rp5, rp6, rp7, rp8, ncol = 2)
+```
+
+
+```{r predict}
+# levels(tf) <- union(levels(tf), levels(trf))
+preds <- predict(m1, newdata = tf, type = "response")
+
+rdf <- data.frame(ID = 1:1431, Predicted = preds)
+
+head(rdf, 10)
+```
+
+
+
+
+
+
+
+
+
+
